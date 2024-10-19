@@ -19,12 +19,23 @@ public class PulsarConsumerController {
         this.pulsarConsumerService = pulsarConsumerService;
     }
 
+    @PostMapping("/initialize")
+    public ResponseEntity<String> initializeConsumer(@RequestBody PulsarConsumerDto pulsarConsumerDto) {
+        try {
+            pulsarConsumerService.initializeConsumer(pulsarConsumerDto.getTopicName(), pulsarConsumerDto.getSubscriptionName(), pulsarConsumerDto.getSchemaType());
+            return ResponseEntity.ok("Consumer initialized successfully");
+        } catch (PulsarClientException e) {
+            return ResponseEntity.status(500).build(); // Handle exceptions appropriately
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body(e.getMessage()); // Bad request for unsupported schema
+        }
+    }
+
     @GetMapping("/consume")
-    public ResponseEntity<List<String>> consumeMessages(
-            @RequestParam String topicName, @RequestParam Integer messageCount, @RequestParam String schemaType) {
+    public ResponseEntity<List<String>> consumeMessages(@RequestParam Integer messageCount) {
 
         try {
-            List<String> messages = pulsarConsumerService.consumeMessages(topicName, messageCount, schemaType);
+            List<String> messages = pulsarConsumerService.consumeMessages(messageCount);
             return ResponseEntity.ok(messages);
         } catch (PulsarClientException e) {
             return ResponseEntity.status(500).build(); // Handle exceptions appropriately

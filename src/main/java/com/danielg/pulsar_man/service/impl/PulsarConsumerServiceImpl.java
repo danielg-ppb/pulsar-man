@@ -1,6 +1,7 @@
 package com.danielg.pulsar_man.service.impl;
 
 import com.danielg.pulsar_man.config.PulsarClientProvider;
+import com.danielg.pulsar_man.config.PulsarConsumer;
 import com.danielg.pulsar_man.service.PulsarConsumerService;
 import com.danielg.pulsar_man.utils.SchemaProvider;
 import org.apache.pulsar.client.api.*;
@@ -13,32 +14,30 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class PulsarConsumerServiceImpl implements PulsarConsumerService {
     private final PulsarClientProvider pulsarClientProvider;
+    private Consumer<?> pulsarConsumer;
 
     public PulsarConsumerServiceImpl(PulsarClientProvider pulsarClientProvider) {
         this.pulsarClientProvider = pulsarClientProvider;
     }
 
+    public void initializeConsumer(String topicName, String subscriptionName, String schemaType) throws PulsarClientException {
+        this.pulsarConsumer = new PulsarConsumer(pulsarClientProvider, topicName, subscriptionName, schemaType).initializeConsumer();
+    }
+
     @Override
-    public List<String> consumeMessages(String topicName, Integer messageCount, String schemaType) throws PulsarClientException {
+    public List<String> consumeMessages(Integer messageCount) throws PulsarClientException {
         List<String> messages = new ArrayList<>();
 
-        Schema<?> schemaProvider = SchemaProvider.getSchema(schemaType);
-        PulsarClient pulsarClient = pulsarClientProvider.getPulsarClient();
-        Consumer<?> consumer = pulsarClient.newConsumer(schemaProvider)
-                .topic(topicName)
-                .subscriptionName("my-subscription2")
-                .subscribe();
-
         for (int i = 0; i < messageCount; i++) {
-            Message<?> msg = consumer.receive(1, TimeUnit.SECONDS);
+            Message<?> msg = pulsarConsumer.receive(1, TimeUnit.SECONDS);
             if (msg == null) {
                 break; // No more messages to consume
             }
             messages.add(msg.getValue().toString());
-            consumer.acknowledge(msg);
+            pulsarConsumer.acknowledge(msg);
         }
 
-        consumer.close();
+        //pulsarConsumer.close();
         return messages;
     }
 }

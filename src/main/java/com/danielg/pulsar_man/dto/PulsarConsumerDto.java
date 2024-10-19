@@ -11,6 +11,6 @@ import lombok.Setter;
 @Data
 public class PulsarConsumerDto {
     private String topicName;
-    private Integer messageCount;
+    private String subscriptionName;
     private String schemaType;
 }
