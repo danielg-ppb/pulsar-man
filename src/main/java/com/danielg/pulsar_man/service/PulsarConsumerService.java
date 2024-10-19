@@ -5,6 +5,6 @@ import org.apache.pulsar.client.api.Schema;
 
 import java.util.List;
 
-public interface PulsarConsumerService<T> {
-    public List<?> consumeMessages(String topicName, Integer messageCount, Schema<T> schemaType) throws PulsarClientException;
+public interface PulsarConsumerService {
+    public List<String> consumeMessages(String topicName, Integer messageCount, String schemaType) throws PulsarClientException;
 }
