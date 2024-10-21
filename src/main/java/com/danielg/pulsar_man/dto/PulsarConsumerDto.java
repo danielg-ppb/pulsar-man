@@ -13,4 +13,5 @@ public class PulsarConsumerDto {
     private String topicName;
     private String subscriptionName;
     private String schemaType;
+    private String initialPosition;
 }

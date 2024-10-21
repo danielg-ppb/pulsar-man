@@ -22,7 +22,7 @@ public class PulsarConsumerController {
     @PostMapping("/initialize")
     public ResponseEntity<String> initializeConsumer(@RequestBody PulsarConsumerDto pulsarConsumerDto) {
         try {
-            pulsarConsumerService.initializeConsumer(pulsarConsumerDto.getTopicName(), pulsarConsumerDto.getSubscriptionName(), pulsarConsumerDto.getSchemaType());
+            pulsarConsumerService.initializeConsumer(pulsarConsumerDto);
             return ResponseEntity.ok("Consumer initialized successfully");
         } catch (PulsarClientException e) {
             return ResponseEntity.status(500).build(); // Handle exceptions appropriately
