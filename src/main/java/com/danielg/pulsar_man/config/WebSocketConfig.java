@@ -2,6 +2,7 @@ package com.danielg.pulsar_man.config;
 
 import com.danielg.pulsar_man.service.PulsarConsumerService;
 import com.danielg.pulsar_man.socket.PulsarMessageWebSocketHandler;
+import com.danielg.pulsar_man.state.InMemoryPulsarConsumerState;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
@@ -11,20 +12,20 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @Configuration
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
-        private final PulsarConsumerService pulsarConsumerService;
+        private final InMemoryPulsarConsumerState pulsarConsumerState;
 
-    public WebSocketConfig(PulsarConsumerService pulsarConsumerService) {
-        this.pulsarConsumerService = pulsarConsumerService;
+    public WebSocketConfig(InMemoryPulsarConsumerState pulsarConsumerState) {
+        this.pulsarConsumerState = pulsarConsumerState;
     }
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(new PulsarMessageWebSocketHandler(this.pulsarConsumerService), "/pulsar/messages")
+        registry.addHandler(new PulsarMessageWebSocketHandler(this.pulsarConsumerState), "/pulsar/messages")
                 .setAllowedOrigins("*"); // Allow requests from all origins
     }
 
     @Bean
     public PulsarMessageWebSocketHandler pulsarMessageWebSocketHandler() {
-        return new PulsarMessageWebSocketHandler(pulsarConsumerService);
+        return new PulsarMessageWebSocketHandler(pulsarConsumerState);
     }
 }

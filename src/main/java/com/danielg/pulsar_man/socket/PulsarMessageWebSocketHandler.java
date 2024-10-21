@@ -1,23 +1,25 @@
 package com.danielg.pulsar_man.socket;
 
-import com.danielg.pulsar_man.service.PulsarConsumerService;
+import com.danielg.pulsar_man.state.InMemoryPulsarConsumerState;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.Message;
-import org.apache.pulsar.client.api.PulsarClient;
+import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class PulsarMessageWebSocketHandler extends TextWebSocketHandler {
-    private PulsarConsumerService pulsarConsumerService;
+    private InMemoryPulsarConsumerState pulsarConsumerState;
     private final List<WebSocketSession> sessions = new ArrayList<>();
+    private final ObjectMapper objectMapper;
 
-    public PulsarMessageWebSocketHandler(PulsarConsumerService pulsarConsumerService) {
-        this.pulsarConsumerService = pulsarConsumerService;
+    public PulsarMessageWebSocketHandler(InMemoryPulsarConsumerState pulsarConsumerState) {
+        this.pulsarConsumerState = pulsarConsumerState;
+        this.objectMapper = new ObjectMapper();
     }
 
     @Override
@@ -28,7 +30,7 @@ public class PulsarMessageWebSocketHandler extends TextWebSocketHandler {
     }
 
     @Override
-    public void afterConnectionClosed(WebSocketSession session, org.springframework.web.socket.CloseStatus status) throws Exception {
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         sessions.remove(session);
         System.out.println("WebSocket connection closed with session: " + session.getId());
     }
@@ -42,11 +44,23 @@ public class PulsarMessageWebSocketHandler extends TextWebSocketHandler {
     public void startPulsarConsumer(WebSocketSession session) {
         new Thread(() -> {
             try {
-                Consumer<?> consumer = this.pulsarConsumerService.getPulsarConsumerInstance();
+                Consumer<?> consumer = this.pulsarConsumerState.getPulsarConsumer().getConsumer();
 
                 while (session.isOpen()) {
                     Message<?> msg = consumer.receive();
-                    session.sendMessage(new TextMessage("Message from Pulsar: " + msg.getValue()));
+
+                    // Build a map for the JSON message
+                    Map<String, Object> jsonResponse = new HashMap<>();
+                    jsonResponse.put("publishDate", new Date(msg.getPublishTime()));
+                    jsonResponse.put("value", msg.getValue()); // Add msg value directly
+
+                    // Convert the map to a JSON string using Jackson
+                    String jsonMessage = objectMapper.writeValueAsString(jsonResponse);
+
+                    // Send the JSON message to the WebSocket client
+                    session.sendMessage(new TextMessage(jsonMessage));
+
+                    // Acknowledge the message after sending
                     consumer.acknowledge(msg);
                 }
 
@@ -61,4 +75,6 @@ public class PulsarMessageWebSocketHandler extends TextWebSocketHandler {
             }
         }).start();
     }
+
+
 }

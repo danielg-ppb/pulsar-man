@@ -1,0 +1,7 @@
+<div class="container">
+  <h1>Pulsar WebSocket Messages</h1>
+  <button (click)="sendTestMessage()">Send Test Message</button>
+  <ul>
+    <li *ngFor="let message of messages">{{ message.value }}</li>
+  </ul>
+</div>
