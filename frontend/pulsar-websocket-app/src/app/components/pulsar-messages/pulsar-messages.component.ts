@@ -1,20 +1,26 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import {Component, OnInit, OnDestroy, LOCALE_ID, ViewChild, ElementRef} from '@angular/core';
 import { Subscription } from 'rxjs';
 import {WebSocketService} from "../../../service/WebSocketService";
-import {NgForOf} from "@angular/common";
+import {DatePipe, NgForOf} from "@angular/common";
 
 @Component({
   selector: 'app-pulsar-messages',
   templateUrl: './pulsar-messages.component.html',
   standalone: true,
   imports: [
-    NgForOf
+    NgForOf,
+    DatePipe
+  ],
+  providers: [
+    { provide: LOCALE_ID, useValue: 'pt' } // Set the locale globally to French
   ],
   styleUrls: ['./pulsar-messages.component.css']
 })
 export class PulsarMessagesComponent implements OnInit, OnDestroy {
   messages: any[] = [];
   private messageSubscription!: Subscription;
+
+  @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
 
   constructor(private webSocketService: WebSocketService) { }
 
@@ -23,7 +29,16 @@ export class PulsarMessagesComponent implements OnInit, OnDestroy {
     this.messageSubscription = this.webSocketService.getMessages().subscribe((message) => {
       console.log(message);
       this.messages.push(message); // Add new messages to the array
+      this.scrollToBottom();
     });
+  }
+
+  scrollToBottom(): void {
+    try {
+      this.messagesContainer.nativeElement.scrollTop = this.messagesContainer.nativeElement.scrollHeight;
+    } catch (err) {
+      console.error('Scroll error:', err);
+    }
   }
 
   // Send a test message to WebSocket server
