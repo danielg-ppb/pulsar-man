@@ -1,13 +1,20 @@
 package com.danielg.pulsar_man.service.impl;
 
-import com.danielg.pulsar_man.service.PulsarTopicService;
+import com.danielg.pulsar_man.dto.TopicListDto;
+import com.danielg.pulsar_man.service.PulsarAdminService;
 import com.danielg.pulsar_man.state.InMemoryPulsarAdminState;
 import org.apache.pulsar.client.api.PulsarClientException;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-public class PulsarTopicServiceImpl implements PulsarTopicService {
+@Service
+public class PulsarAdminServiceImpl implements PulsarAdminService {
     private InMemoryPulsarAdminState pulsarAdminState;
+
+    public PulsarAdminServiceImpl(InMemoryPulsarAdminState pulsarAdminState) {
+        this.pulsarAdminState = pulsarAdminState;
+    }
 
     public void initializePulsarAdmin(String serviceUrl) throws PulsarClientException {
         if (pulsarAdminState != null && pulsarAdminState.getPulsarAdmin() != null) {
@@ -20,10 +27,12 @@ public class PulsarTopicServiceImpl implements PulsarTopicService {
     }
 
     @Override
-    public List<String> listTopics(String tenant, String namespace) {
+    public TopicListDto listTopics(String tenant, String namespace) {
         try {
             String namespacePath = tenant + "/" + namespace;
-            return pulsarAdminState.getPulsarAdmin().topics().getList(namespacePath);
+            //            return pulsarAdminState.getPulsarAdmin().topics().getList(namespacePath); -> with partitions
+
+            return new TopicListDto(pulsarAdminState.getPulsarAdmin().topics().getPartitionedTopicList(namespacePath));
         } catch (Exception e) {
             throw new RuntimeException("Failed to list topics", e);
         }

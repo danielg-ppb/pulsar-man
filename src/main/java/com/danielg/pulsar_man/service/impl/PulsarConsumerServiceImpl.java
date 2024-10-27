@@ -6,6 +6,7 @@ import com.danielg.pulsar_man.state.InMemoryPulsarClientProviderState;
 import com.danielg.pulsar_man.state.InMemoryPulsarConsumerState;
 import com.danielg.pulsar_man.utils.PulsarSubcriptionUtils;
 import com.danielg.pulsar_man.utils.SchemaProvider;
+import jakarta.annotation.PreDestroy;
 import org.apache.pulsar.client.api.*;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +27,7 @@ public class PulsarConsumerServiceImpl implements PulsarConsumerService {
     @Override
     public void initializeConsumer(PulsarConsumerDto pulsarConsumerDto) throws PulsarClientException {
         if (this.pulsarConsumerState.getPulsarConsumer() != null) {
-            this.pulsarConsumerState.getPulsarConsumer().getConsumer().close();
+            this.closeConsumer();
         }
 
         this.pulsarConsumerState.initializePulsarConsumerState(this.pulsarClientProviderState.getPulsarClientProvider().getPulsarClient().newConsumer(SchemaProvider.getSchema(pulsarConsumerDto.getSchemaType()))
@@ -53,6 +54,24 @@ public class PulsarConsumerServiceImpl implements PulsarConsumerService {
 
         //pulsarConsumer.close();
         return messages;
+    }
+
+    public synchronized void closeConsumer() {
+        if (this.pulsarConsumerState.getPulsarConsumer() != null && this.pulsarConsumerState.getPulsarConsumer().getConsumer() != null) {
+            try {
+                this.pulsarConsumerState.getPulsarConsumer().getConsumer().close(); // Close the Pulsar consumer
+            } catch (Exception e) {
+                e.printStackTrace();
+                // Consider using a logger instead of printing stack trace in production
+            } finally {
+                this.pulsarConsumerState.setPulsarConsumerToNull(); // Ensure the reference is cleared
+            }
+        }
+    }
+
+    @PreDestroy
+    public void shutdown() {
+        closeConsumer(); // Close the Pulsar client during shutdown
     }
 
 }

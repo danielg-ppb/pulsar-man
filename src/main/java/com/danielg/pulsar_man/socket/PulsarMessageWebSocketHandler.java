@@ -1,5 +1,6 @@
 package com.danielg.pulsar_man.socket;
 
+import com.danielg.pulsar_man.model.WebSocketInputMessage;
 import com.danielg.pulsar_man.state.InMemoryPulsarConsumerState;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.pulsar.client.api.Consumer;
@@ -10,6 +11,8 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 
 public class PulsarMessageWebSocketHandler extends TextWebSocketHandler {
@@ -49,13 +52,8 @@ public class PulsarMessageWebSocketHandler extends TextWebSocketHandler {
                 while (session.isOpen()) {
                     Message<?> msg = consumer.receive();
 
-                    // Build a map for the JSON message
-                    Map<String, Object> jsonResponse = new HashMap<>();
-                    jsonResponse.put("publishDate", new Date(msg.getPublishTime()));
-                    jsonResponse.put("value", msg.getValue()); // Add msg value directly
-
-                    // Convert the map to a JSON string using Jackson
-                    String jsonMessage = objectMapper.writeValueAsString(jsonResponse);
+                    WebSocketInputMessage webSocketInputMessage = new WebSocketInputMessage(LocalDateTime.ofEpochSecond(msg.getPublishTime() / 1000, 0, ZoneOffset.UTC), msg.getValue());
+                    String jsonMessage = webSocketInputMessage.toJson(objectMapper);
 
                     // Send the JSON message to the WebSocket client
                     session.sendMessage(new TextMessage(jsonMessage));
