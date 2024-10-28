@@ -1,7 +1,7 @@
 package com.danielg.pulsar_man.socket;
 
 import com.danielg.pulsar_man.model.WebSocketInputMessage;
-import com.danielg.pulsar_man.state.InMemoryPulsarConsumerState;
+import com.danielg.pulsar_man.state.PulsarConsumerManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.Message;
@@ -16,11 +16,11 @@ import java.time.ZoneOffset;
 import java.util.*;
 
 public class PulsarMessageWebSocketHandler extends TextWebSocketHandler {
-    private InMemoryPulsarConsumerState pulsarConsumerState;
+    private PulsarConsumerManager pulsarConsumerState;
     private final List<WebSocketSession> sessions = new ArrayList<>();
     private final ObjectMapper objectMapper;
 
-    public PulsarMessageWebSocketHandler(InMemoryPulsarConsumerState pulsarConsumerState) {
+    public PulsarMessageWebSocketHandler(PulsarConsumerManager pulsarConsumerState) {
         this.pulsarConsumerState = pulsarConsumerState;
         this.objectMapper = new ObjectMapper();
     }

@@ -1,15 +1,11 @@
-package com.danielg.pulsar_man.dto;
+package com.danielg.pulsar_man.dto.request;
 
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
 @NoArgsConstructor
 @Data
-public class PulsarConsumerDto {
+public class PulsarConsumerRequestDto {
     private String topicName;
     private String subscriptionName;
     private String schemaType;

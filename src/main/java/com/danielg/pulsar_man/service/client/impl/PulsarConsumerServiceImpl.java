@@ -1,13 +1,15 @@
-package com.danielg.pulsar_man.service.impl;
+package com.danielg.pulsar_man.service.client.impl;
 
-import com.danielg.pulsar_man.dto.PulsarConsumerDto;
-import com.danielg.pulsar_man.service.PulsarConsumerService;
-import com.danielg.pulsar_man.state.InMemoryPulsarClientProviderState;
-import com.danielg.pulsar_man.state.InMemoryPulsarConsumerState;
+import com.danielg.pulsar_man.dto.request.PulsarConsumerRequestDto;
+import com.danielg.pulsar_man.service.client.PulsarConsumerService;
+import com.danielg.pulsar_man.state.PulsarClientManager;
+import com.danielg.pulsar_man.state.PulsarConsumerManager;
 import com.danielg.pulsar_man.utils.PulsarSubcriptionUtils;
 import com.danielg.pulsar_man.utils.SchemaProvider;
 import jakarta.annotation.PreDestroy;
 import org.apache.pulsar.client.api.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,21 +18,23 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 public class PulsarConsumerServiceImpl implements PulsarConsumerService {
-    private final InMemoryPulsarClientProviderState pulsarClientProviderState;
-    private final InMemoryPulsarConsumerState pulsarConsumerState;
+    private static final Logger logger = LoggerFactory.getLogger(PulsarConsumerServiceImpl.class);
 
-    public PulsarConsumerServiceImpl(InMemoryPulsarClientProviderState pulsarClientProviderState, InMemoryPulsarConsumerState pulsarConsumerState) {
-        this.pulsarClientProviderState = pulsarClientProviderState;
+    private final PulsarClientManager pulsarClientManagerState;
+    private final PulsarConsumerManager pulsarConsumerState;
+
+    public PulsarConsumerServiceImpl(PulsarClientManager pulsarClientManagerState, PulsarConsumerManager pulsarConsumerState) {
+        this.pulsarClientManagerState = pulsarClientManagerState;
         this.pulsarConsumerState = pulsarConsumerState;
     }
 
     @Override
-    public void initializeConsumer(PulsarConsumerDto pulsarConsumerDto) throws PulsarClientException {
+    public void initializeConsumer(PulsarConsumerRequestDto pulsarConsumerDto) throws PulsarClientException {
         if (this.pulsarConsumerState.getPulsarConsumer() != null) {
             this.closeConsumer();
         }
 
-        this.pulsarConsumerState.initializePulsarConsumerState(this.pulsarClientProviderState.getPulsarClientProvider().getPulsarClient().newConsumer(SchemaProvider.getSchema(pulsarConsumerDto.getSchemaType()))
+        this.pulsarConsumerState.initializePulsarConsumerState(this.pulsarClientManagerState.getPulsarClientProvider().getPulsarClient().newConsumer(SchemaProvider.getSchema(pulsarConsumerDto.getSchemaType()))
                 .topic(pulsarConsumerDto.getTopicName())
                 .subscriptionName(pulsarConsumerDto.getSubscriptionName())
                 .subscriptionType(SubscriptionType.Shared)
@@ -41,6 +45,7 @@ public class PulsarConsumerServiceImpl implements PulsarConsumerService {
 
     @Override
     public List<String> consumeMessages(Integer messageCount) throws PulsarClientException {
+        logger.info("Consuming messages from topic: " + this.pulsarConsumerState.getPulsarConsumer().getTopicName());
         List<String> messages = new ArrayList<>();
 
         for (int i = 0; i < messageCount; i++) {
@@ -51,8 +56,6 @@ public class PulsarConsumerServiceImpl implements PulsarConsumerService {
             messages.add(msg.getValue().toString());
             this.pulsarConsumerState.getPulsarConsumer().getConsumer().acknowledge(msg);
         }
-
-        //pulsarConsumer.close();
         return messages;
     }
 
@@ -61,8 +64,7 @@ public class PulsarConsumerServiceImpl implements PulsarConsumerService {
             try {
                 this.pulsarConsumerState.getPulsarConsumer().getConsumer().close(); // Close the Pulsar consumer
             } catch (Exception e) {
-                e.printStackTrace();
-                // Consider using a logger instead of printing stack trace in production
+                logger.error("Cannot close pulsar consumer", e);
             } finally {
                 this.pulsarConsumerState.setPulsarConsumerToNull(); // Ensure the reference is cleared
             }

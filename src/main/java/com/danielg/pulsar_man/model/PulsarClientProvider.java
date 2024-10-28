@@ -1,16 +1,16 @@
 package com.danielg.pulsar_man.model;
 
-import com.danielg.pulsar_man.utils.PulsarSubcriptionUtils;
-import com.danielg.pulsar_man.utils.SchemaProvider;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.pulsar.client.api.PulsarClient;
-import org.apache.pulsar.client.api.SubscriptionType;
-import org.apache.pulsar.shade.javax.annotation.PreDestroy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Getter
 @Setter
 public class PulsarClientProvider {
+    private static final Logger logger = LoggerFactory.getLogger(PulsarClientProvider.class);
+
     private PulsarClient pulsarClient;
 
     public PulsarClientProvider(String serviceUrl) {
@@ -19,7 +19,7 @@ public class PulsarClientProvider {
                     .serviceUrl(serviceUrl)
                     .build();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Failed to initialize pulsar client", e);
         }
     }
 }

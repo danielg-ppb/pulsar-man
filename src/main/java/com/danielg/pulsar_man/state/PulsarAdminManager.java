@@ -5,7 +5,7 @@ import org.apache.pulsar.client.api.PulsarClientException;
 import org.springframework.stereotype.Component;
 
 @Component
-public class InMemoryPulsarAdminState {
+public class PulsarAdminManager {
     private PulsarAdmin pulsarAdmin;
 
     public synchronized void initializePulsarAdmin(String serviceUrl) throws PulsarClientException {

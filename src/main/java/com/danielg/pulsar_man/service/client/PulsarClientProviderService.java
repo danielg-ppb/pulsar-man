@@ -1,4 +1,4 @@
-package com.danielg.pulsar_man.service;
+package com.danielg.pulsar_man.service.client;
 
 import org.apache.pulsar.client.api.PulsarClientException;
 

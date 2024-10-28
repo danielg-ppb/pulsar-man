@@ -1,10 +1,8 @@
-package com.danielg.pulsar_man.controller;
+package com.danielg.pulsar_man.controller.client;
 
-import com.danielg.pulsar_man.dto.PulsarConsumerDto;
-import com.danielg.pulsar_man.service.PulsarConsumerService;
-import com.danielg.pulsar_man.utils.SchemaProvider;
+import com.danielg.pulsar_man.dto.request.PulsarConsumerRequestDto;
+import com.danielg.pulsar_man.service.client.PulsarConsumerService;
 import org.apache.pulsar.client.api.PulsarClientException;
-import org.apache.pulsar.client.api.Schema;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +18,7 @@ public class PulsarConsumerController {
     }
 
     @PostMapping("/initialize")
-    public ResponseEntity<String> initializeConsumer(@RequestBody PulsarConsumerDto pulsarConsumerDto) {
+    public ResponseEntity<String> initializeConsumer(@RequestBody PulsarConsumerRequestDto pulsarConsumerDto) {
         try {
             pulsarConsumerService.initializeConsumer(pulsarConsumerDto);
             return ResponseEntity.ok("Consumer initialized successfully");

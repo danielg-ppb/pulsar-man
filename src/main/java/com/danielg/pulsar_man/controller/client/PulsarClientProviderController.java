@@ -1,8 +1,7 @@
-package com.danielg.pulsar_man.controller;
+package com.danielg.pulsar_man.controller.client;
 
-import com.danielg.pulsar_man.dto.PulsarServiceUrlDto;
-import com.danielg.pulsar_man.service.PulsarClientProviderService;
-import com.danielg.pulsar_man.state.InMemoryPulsarClientProviderState;
+import com.danielg.pulsar_man.dto.request.PulsarServiceUrlRequestDto;
+import com.danielg.pulsar_man.service.client.PulsarClientProviderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +18,7 @@ public class PulsarClientProviderController {
     }
 
     @PostMapping("/service-url")
-    public ResponseEntity<String> setServiceUrl(@RequestBody PulsarServiceUrlDto pulsarServiceUrlDto) {
+    public ResponseEntity<String> setServiceUrl(@RequestBody PulsarServiceUrlRequestDto pulsarServiceUrlDto) {
         try {
             this.pulsarClientProviderService.initializeWithServiceUrl(pulsarServiceUrlDto.getServiceUrl());
             return ResponseEntity.ok("Service URL set successfully");
