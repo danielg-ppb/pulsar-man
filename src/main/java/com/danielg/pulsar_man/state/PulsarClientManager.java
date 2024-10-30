@@ -1,5 +1,6 @@
 package com.danielg.pulsar_man.state;
 
+import com.danielg.pulsar_man.domain.model.PulsarClientProvider;
 import lombok.Getter;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.springframework.stereotype.Component;
@@ -7,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Getter
 @Component
 public class PulsarClientManager {
-    private com.danielg.pulsar_man.model.PulsarClientProvider pulsarClientProvider;
+    private PulsarClientProvider pulsarClientProvider;
 
     public synchronized void initializePulsarClientProvider(String serviceUrl) {
         if (this.pulsarClientProvider != null) {
@@ -17,10 +18,10 @@ public class PulsarClientManager {
                 e.printStackTrace();
             }
         }
-        this.pulsarClientProvider = new com.danielg.pulsar_man.model.PulsarClientProvider(serviceUrl);
+        this.pulsarClientProvider = new PulsarClientProvider(serviceUrl);
     }
 
-    public synchronized com.danielg.pulsar_man.model.PulsarClientProvider getPulsarClientProvider() {
+    public synchronized PulsarClientProvider getPulsarClientProvider() {
         return this.pulsarClientProvider;
     }
 
