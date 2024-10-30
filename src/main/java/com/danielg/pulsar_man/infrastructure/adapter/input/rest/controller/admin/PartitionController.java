@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/api/pulsar-admin/partition")
-public class PulsarAdminPartitionController {
+public class PartitionController {
     private final GetNumberOfPartitionsFromTopicUseCase getNumberOfPartitionsFromTopicUseCase;
     private final ListPartitionsFromTopicUseCase listPartitionsFromTopicUseCase;
 
     @Autowired
-    public PulsarAdminPartitionController(GetNumberOfPartitionsFromTopicUseCase getNumberOfPartitionsFromTopicUseCase, ListPartitionsFromTopicUseCase listPartitionsFromTopicUseCase) {
+    public PartitionController(GetNumberOfPartitionsFromTopicUseCase getNumberOfPartitionsFromTopicUseCase, ListPartitionsFromTopicUseCase listPartitionsFromTopicUseCase) {
         this.getNumberOfPartitionsFromTopicUseCase = getNumberOfPartitionsFromTopicUseCase;
         this.listPartitionsFromTopicUseCase = listPartitionsFromTopicUseCase;
     }

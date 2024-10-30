@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/api/pulsar-admin")
-public class PulsarAdminConnectionController {
+public class ConnectionController {
     private final InitializePulsarAdminConnectionUseCase initializePulsarAdminConnectionUseCase;
 
     @Autowired
-    public PulsarAdminConnectionController(InitializePulsarAdminConnectionUseCase initializePulsarAdminConnectionUseCase) {
+    public ConnectionController(InitializePulsarAdminConnectionUseCase initializePulsarAdminConnectionUseCase) {
         this.initializePulsarAdminConnectionUseCase = initializePulsarAdminConnectionUseCase;
     }
 

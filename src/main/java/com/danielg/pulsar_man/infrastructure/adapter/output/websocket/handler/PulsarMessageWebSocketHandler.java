@@ -1,7 +1,7 @@
 package com.danielg.pulsar_man.infrastructure.adapter.output.websocket.handler;
 
 import com.danielg.pulsar_man.domain.model.WebSocketInputMessage;
-import com.danielg.pulsar_man.state.PulsarConsumerManager;
+import com.danielg.pulsar_man.infrastructure.adapter.output.pulsar.manager.PulsarConsumerManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.Message;

@@ -10,13 +10,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/pulsar-admin/subscription")
-public class PulsarAdminSubscriptionController {
+public class SubscriptionController {
     private final ListSubscriptionsUseCase listSubscriptionsUseCase;
     private final DeleteSubscriptionUseCase deleteSubscriptionUseCase;
     private final BatchDeleteSubscriptionsUseCase batchDeleteSubscriptionsUseCase;
 
     @Autowired
-    public PulsarAdminSubscriptionController(ListSubscriptionsUseCase listSubscriptionsUseCase, DeleteSubscriptionUseCase deleteSubscriptionUseCase, BatchDeleteSubscriptionsUseCase batchDeleteSubscriptionsUseCase) {
+    public SubscriptionController(ListSubscriptionsUseCase listSubscriptionsUseCase, DeleteSubscriptionUseCase deleteSubscriptionUseCase, BatchDeleteSubscriptionsUseCase batchDeleteSubscriptionsUseCase) {
         this.listSubscriptionsUseCase = listSubscriptionsUseCase;
         this.deleteSubscriptionUseCase = deleteSubscriptionUseCase;
         this.batchDeleteSubscriptionsUseCase = batchDeleteSubscriptionsUseCase;

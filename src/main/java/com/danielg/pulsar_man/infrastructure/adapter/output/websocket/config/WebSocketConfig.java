@@ -1,7 +1,7 @@
 package com.danielg.pulsar_man.infrastructure.adapter.output.websocket.config;
 
 import com.danielg.pulsar_man.infrastructure.adapter.output.websocket.handler.PulsarMessageWebSocketHandler;
-import com.danielg.pulsar_man.state.PulsarConsumerManager;
+import com.danielg.pulsar_man.infrastructure.adapter.output.pulsar.manager.PulsarConsumerManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;

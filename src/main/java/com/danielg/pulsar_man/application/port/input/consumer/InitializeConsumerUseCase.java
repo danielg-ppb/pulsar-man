@@ -4,5 +4,5 @@ import com.danielg.pulsar_man.infrastructure.adapter.input.rest.data.request.Pul
 import org.apache.pulsar.client.api.PulsarClientException;
 
 public interface InitializeConsumerUseCase {
-    public void initializeConsumer(PulsarConsumerRequest pulsarConsumerDto) throws PulsarClientException;
+    void initializeConsumer(PulsarConsumerRequest pulsarConsumerDto) throws PulsarClientException;
 }

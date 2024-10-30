@@ -1,4 +1,4 @@
-package com.danielg.pulsar_man.state;
+package com.danielg.pulsar_man.infrastructure.adapter.output.pulsar.manager;
 
 import org.apache.pulsar.client.admin.PulsarAdmin;
 import org.apache.pulsar.client.api.PulsarClientException;

@@ -1,4 +1,4 @@
-package com.danielg.pulsar_man.state;
+package com.danielg.pulsar_man.infrastructure.adapter.output.pulsar.manager;
 
 import com.danielg.pulsar_man.domain.model.PulsarConsumer;
 import com.danielg.pulsar_man.infrastructure.adapter.input.rest.data.request.PulsarConsumerRequest;

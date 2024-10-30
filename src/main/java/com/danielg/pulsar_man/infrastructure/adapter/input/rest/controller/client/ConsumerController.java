@@ -11,11 +11,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/pulsar-consumer")
-public class PulsarConsumerController {
+public class ConsumerController {
     private final InitializeConsumerUseCase initializeConsumerUseCase;
     private final ConsumeMessagesUseCase consumeMessagesUseCase;
 
-    public PulsarConsumerController(InitializeConsumerUseCase initializeConsumerUseCase, ConsumeMessagesUseCase consumeMessagesUseCase) {
+    public ConsumerController(InitializeConsumerUseCase initializeConsumerUseCase, ConsumeMessagesUseCase consumeMessagesUseCase) {
         this.initializeConsumerUseCase = initializeConsumerUseCase;
         this.consumeMessagesUseCase = consumeMessagesUseCase;
     }

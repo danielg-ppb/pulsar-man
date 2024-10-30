@@ -1,7 +1,7 @@
 package com.danielg.pulsar_man.application.service;
 
 import com.danielg.pulsar_man.application.port.input.connetion.InitializePulsarAdminConnectionUseCase;
-import com.danielg.pulsar_man.state.PulsarAdminManager;
+import com.danielg.pulsar_man.infrastructure.adapter.output.pulsar.manager.PulsarAdminManager;
 import jakarta.annotation.PreDestroy;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.slf4j.Logger;
@@ -9,12 +9,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PulsarAdminConnectionService implements InitializePulsarAdminConnectionUseCase {
-    private static final Logger logger = LoggerFactory.getLogger(PulsarAdminConnectionService.class);
+public class ConnectionService implements InitializePulsarAdminConnectionUseCase {
+    private static final Logger logger = LoggerFactory.getLogger(ConnectionService.class);
 
     private PulsarAdminManager pulsarAdminState;
 
-    public PulsarAdminConnectionService(PulsarAdminManager pulsarAdminState) {
+    public ConnectionService(PulsarAdminManager pulsarAdminState) {
         this.pulsarAdminState = pulsarAdminState;
     }
 

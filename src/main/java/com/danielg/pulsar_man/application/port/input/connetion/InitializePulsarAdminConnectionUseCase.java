@@ -3,5 +3,5 @@ package com.danielg.pulsar_man.application.port.input.connetion;
 import org.apache.pulsar.client.api.PulsarClientException;
 
 public interface InitializePulsarAdminConnectionUseCase {
-    public void initializePulsarAdmin(String serviceUrl) throws PulsarClientException;
+    void initializePulsarAdmin(String serviceUrl) throws PulsarClientException;
 }

@@ -3,7 +3,8 @@ package com.danielg.pulsar_man.application.service;
 import com.danielg.pulsar_man.application.port.input.subscription.BatchDeleteSubscriptionsUseCase;
 import com.danielg.pulsar_man.application.port.input.subscription.DeleteSubscriptionUseCase;
 import com.danielg.pulsar_man.application.port.input.subscription.ListSubscriptionsUseCase;
-import com.danielg.pulsar_man.state.PulsarAdminManager;
+import com.danielg.pulsar_man.infrastructure.adapter.output.pulsar.manager.PulsarAdminManager;
+import com.danielg.pulsar_man.utils.PulsarTopicUtils;
 import org.apache.pulsar.client.admin.PulsarAdminException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,12 +13,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class PulsarAdminSubscriptionService implements ListSubscriptionsUseCase, DeleteSubscriptionUseCase, BatchDeleteSubscriptionsUseCase {
-    private static final Logger logger = LoggerFactory.getLogger(PulsarAdminSubscriptionService.class);
+public class SubscriptionService implements ListSubscriptionsUseCase, DeleteSubscriptionUseCase, BatchDeleteSubscriptionsUseCase {
+    private static final Logger logger = LoggerFactory.getLogger(SubscriptionService.class);
 
     private PulsarAdminManager pulsarAdminManager;
 
-    public PulsarAdminSubscriptionService(PulsarAdminManager pulsarAdminManager) {
+    public SubscriptionService(PulsarAdminManager pulsarAdminManager) {
         this.pulsarAdminManager = pulsarAdminManager;
     }
 
@@ -25,7 +26,7 @@ public class PulsarAdminSubscriptionService implements ListSubscriptionsUseCase,
     @Override
     public List<String> listSubscriptions(String tenant, String namespace, String topic) {
         try {
-            String fullTopicName = "persistent://" + tenant + "/" + namespace + "/" + topic;
+            String fullTopicName = PulsarTopicUtils.concatFullTopic(tenant, namespace, topic);
             return pulsarAdminManager.getPulsarAdmin().topics().getSubscriptions(fullTopicName);
         } catch (PulsarAdminException e) {
             logger.error("Failed to list subscriptions", e);
@@ -35,7 +36,7 @@ public class PulsarAdminSubscriptionService implements ListSubscriptionsUseCase,
 
     @Override
     public void deleteSubscription(String tenant, String namespace, String topic, String subscriptionName) {
-        String fullTopicName = "persistent://" + tenant + "/" + namespace + "/" + topic;
+        String fullTopicName = PulsarTopicUtils.concatFullTopic(tenant, namespace, topic);
         try {
             pulsarAdminManager.getPulsarAdmin().topics().deleteSubscription(fullTopicName, subscriptionName);
             logger.info("Subscription '{}' deleted successfully for topic '{}'.", subscriptionName, fullTopicName);
@@ -46,7 +47,7 @@ public class PulsarAdminSubscriptionService implements ListSubscriptionsUseCase,
     }
 
     public void batchDeleteSubscription(String tenant, String namespace, String topic, List<String> subscriptionNames) {
-        String fullTopicName = "persistent://" + tenant + "/" + namespace + "/" + topic;
+        String fullTopicName = PulsarTopicUtils.concatFullTopic(tenant, namespace, topic);
         for (String subscriptionName : subscriptionNames) {
             this.deleteSubscription(tenant, namespace, topic, subscriptionName);
             logger.info("Subscription '{}' deleted successfully for topic '{}'.", subscriptionName, fullTopicName);

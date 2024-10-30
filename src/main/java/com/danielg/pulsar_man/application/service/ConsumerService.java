@@ -3,8 +3,8 @@ package com.danielg.pulsar_man.application.service;
 import com.danielg.pulsar_man.application.port.input.consumer.ConsumeMessagesUseCase;
 import com.danielg.pulsar_man.application.port.input.consumer.InitializeConsumerUseCase;
 import com.danielg.pulsar_man.infrastructure.adapter.input.rest.data.request.PulsarConsumerRequest;
-import com.danielg.pulsar_man.state.PulsarClientManager;
-import com.danielg.pulsar_man.state.PulsarConsumerManager;
+import com.danielg.pulsar_man.infrastructure.adapter.output.pulsar.manager.PulsarClientManager;
+import com.danielg.pulsar_man.infrastructure.adapter.output.pulsar.manager.PulsarConsumerManager;
 import com.danielg.pulsar_man.utils.PulsarSubcriptionUtils;
 import com.danielg.pulsar_man.utils.SchemaProvider;
 import jakarta.annotation.PreDestroy;
@@ -18,13 +18,13 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class PulsarConsumerService implements InitializeConsumerUseCase, ConsumeMessagesUseCase {
-    private static final Logger logger = LoggerFactory.getLogger(PulsarConsumerService.class);
+public class ConsumerService implements InitializeConsumerUseCase, ConsumeMessagesUseCase {
+    private static final Logger logger = LoggerFactory.getLogger(ConsumerService.class);
 
     private final PulsarClientManager pulsarClientManagerState;
     private final PulsarConsumerManager pulsarConsumerState;
 
-    public PulsarConsumerService(PulsarClientManager pulsarClientManagerState, PulsarConsumerManager pulsarConsumerState) {
+    public ConsumerService(PulsarClientManager pulsarClientManagerState, PulsarConsumerManager pulsarConsumerState) {
         this.pulsarClientManagerState = pulsarClientManagerState;
         this.pulsarConsumerState = pulsarConsumerState;
     }

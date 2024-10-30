@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/api/pulsar-provider")
-public class PulsarClientProviderController {
+public class ProviderController {
 
     private final InitializeClientProviderUseCase initializeClientProviderUseCase;
 
     @Autowired
-    public PulsarClientProviderController(InitializeClientProviderUseCase initializeClientProviderUseCase) {
+    public ProviderController(InitializeClientProviderUseCase initializeClientProviderUseCase) {
         this.initializeClientProviderUseCase = initializeClientProviderUseCase;
     }
 

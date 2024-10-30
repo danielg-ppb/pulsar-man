@@ -1,4 +1,4 @@
-package com.danielg.pulsar_man.state;
+package com.danielg.pulsar_man.infrastructure.adapter.output.pulsar.manager;
 
 import com.danielg.pulsar_man.domain.model.PulsarClientProvider;
 import lombok.Getter;

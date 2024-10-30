@@ -4,25 +4,26 @@ import com.danielg.pulsar_man.application.port.input.partition.GetNumberOfPartit
 import com.danielg.pulsar_man.application.port.input.partition.ListPartitionsFromTopicUseCase;
 import com.danielg.pulsar_man.infrastructure.adapter.input.rest.data.response.PartitionListResponse;
 import com.danielg.pulsar_man.infrastructure.adapter.input.rest.data.response.PartitionNumberResponse;
-import com.danielg.pulsar_man.state.PulsarAdminManager;
+import com.danielg.pulsar_man.infrastructure.adapter.output.pulsar.manager.PulsarAdminManager;
+import com.danielg.pulsar_man.utils.PulsarTopicUtils;
 import org.apache.pulsar.common.partition.PartitionedTopicMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PulsarAdminPartitionService implements GetNumberOfPartitionsFromTopicUseCase, ListPartitionsFromTopicUseCase {
-    private static final Logger logger = LoggerFactory.getLogger(PulsarAdminPartitionService.class);
+public class PartitionService implements GetNumberOfPartitionsFromTopicUseCase, ListPartitionsFromTopicUseCase {
+    private static final Logger logger = LoggerFactory.getLogger(PartitionService.class);
 
     private PulsarAdminManager pulsarAdminManager;
 
-    public PulsarAdminPartitionService(PulsarAdminManager pulsarAdminManager) {
+    public PartitionService(PulsarAdminManager pulsarAdminManager) {
         this.pulsarAdminManager = pulsarAdminManager;
     }
 
     @Override
     public PartitionListResponse listPartitions(String tenant, String namespace, String topic) {
-        String fullTopicName = "persistent://" + tenant + "/" + namespace + "/" + topic;
+        String fullTopicName = PulsarTopicUtils.concatFullTopic(tenant, namespace, topic);
         try {
             PartitionedTopicMetadata metadata = pulsarAdminManager.getPulsarAdmin().topics().getPartitionedTopicMetadata(fullTopicName);
 
@@ -37,7 +38,7 @@ public class PulsarAdminPartitionService implements GetNumberOfPartitionsFromTop
 
     @Override
     public PartitionNumberResponse getNumberOfPartitionsOfTopic(String tenant, String namespace, String topic) {
-        String fullTopicName = "persistent://" + tenant + "/" + namespace + "/" + topic;
+        String fullTopicName = PulsarTopicUtils.concatFullTopic(tenant, namespace, topic);
         try {
             PartitionedTopicMetadata metadata = pulsarAdminManager.getPulsarAdmin().topics().getPartitionedTopicMetadata(fullTopicName);
 
