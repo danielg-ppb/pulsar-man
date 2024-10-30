@@ -2,7 +2,10 @@ package com.danielg.pulsar_man.infrastructure.adapter.output.websocket.handler;
 
 import com.danielg.pulsar_man.domain.model.WebSocketInputMessage;
 import com.danielg.pulsar_man.infrastructure.adapter.output.pulsar.manager.PulsarConsumerManager;
+import com.danielg.pulsar_man.utils.ProtoUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.protobuf.Descriptors;
+import com.google.protobuf.DynamicMessage;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.Message;
 import org.springframework.web.socket.CloseStatus;
@@ -51,8 +54,17 @@ public class PulsarMessageWebSocketHandler extends TextWebSocketHandler {
 
                 while (session.isOpen()) {
                     Message<?> msg = consumer.receive();
+                    String msgValue;
 
-                    WebSocketInputMessage webSocketInputMessage = new WebSocketInputMessage(LocalDateTime.ofEpochSecond(msg.getPublishTime() / 1000, 0, ZoneOffset.UTC), msg.getValue());
+                    String schemaFile = this.pulsarConsumerState.getPulsarConsumer().getSchemaFile();
+                    if (schemaFile != null) {
+                        Descriptors.Descriptor descriptor = ProtoUtils.loadProtoDescriptor("uploads/" + schemaFile);
+                        msgValue = DynamicMessage.parseFrom(descriptor, (byte[]) msg.getData()).toString();
+                    } else {
+                        msgValue = new String(msg.getData());
+                    }
+
+                    WebSocketInputMessage webSocketInputMessage = new WebSocketInputMessage(LocalDateTime.ofEpochSecond(msg.getPublishTime() / 1000, 0, ZoneOffset.UTC), msgValue);
                     String jsonMessage = webSocketInputMessage.toJson(objectMapper);
 
                     // Send the JSON message to the WebSocket client

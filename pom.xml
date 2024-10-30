@@ -19,7 +19,11 @@
         <spring.version>3.3.4</spring.version>
         <postegres.driver.version>42.7.4</postegres.driver.version>
         <lombok.version>1.18.34</lombok.version>
+        <protoc-jar-maven-plugin.protocVersion>3.21.12</protoc-jar-maven-plugin.protocVersion>
+        <protoc-jar-maven-plugin.version>3.11.4</protoc-jar-maven-plugin.version>
     </properties>
+
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -64,10 +68,34 @@
             <artifactId>spring-boot-starter-logging</artifactId>
             <version>${spring.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>${protoc-jar-maven-plugin.protocVersion}</version>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>com.github.os72</groupId>
+                <artifactId>protoc-jar-maven-plugin</artifactId>
+                <version>${protoc-jar-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <protocVersion>${protoc-jar-maven-plugin.protocVersion}</protocVersion>
+                            <inputDirectories>
+                                <include>src/main/java/com/proto</include>
+                            </inputDirectories>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

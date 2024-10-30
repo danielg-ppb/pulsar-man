@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package com.example.protobuf;
+
+message MyMessage {
+  string id = 1;
+  string content = 2;
+  int32 timestamp = 3;
+}

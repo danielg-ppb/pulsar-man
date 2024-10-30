@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 public class PulsarConsumerManager {
     private PulsarConsumer pulsarConsumer;
 
-    public synchronized void initializePulsarConsumerState(Consumer<?> consumer, PulsarConsumerRequest pulsarConsumerDto) {
-        this.pulsarConsumer = new PulsarConsumer(consumer, pulsarConsumerDto.getTopicName(), pulsarConsumerDto.getSubscriptionName(), pulsarConsumerDto.getSchemaType(), pulsarConsumerDto.getInitialPosition());
+    public synchronized void initializePulsarConsumer(Consumer<?> consumer, PulsarConsumerRequest pulsarConsumerDto, String schemaFile) {
+        this.pulsarConsumer = new PulsarConsumer(consumer, pulsarConsumerDto.getTopicName(), pulsarConsumerDto.getSubscriptionName(), pulsarConsumerDto.getSchemaType(), pulsarConsumerDto.getInitialPosition(), schemaFile);
     }
 
     public synchronized void setPulsarConsumerToNull(){

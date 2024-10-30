@@ -1,8 +1,6 @@
 package com.danielg.pulsar_man.infrastructure.adapter.input.rest.controller.admin;
 
 import com.danielg.pulsar_man.application.port.input.namespace.ChangeNamespaceRetentionUseCase;
-import com.danielg.pulsar_man.application.port.input.partition.GetNumberOfPartitionsFromTopicUseCase;
-import com.danielg.pulsar_man.application.port.input.partition.ListPartitionsFromTopicUseCase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
