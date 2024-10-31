@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.net.MalformedURLException;
 import java.util.List;
 
 @RestController
@@ -45,14 +44,8 @@ public class ConsumerController {
             PulsarConsumerRequest pulsarConsumerDto = new PulsarConsumerRequest(topicName, subscriptionName, schemaType, initialPosition);
             initializeDynamicConsumer.initializeDynamicConsumer(pulsarConsumerDto, protoFile);
             return ResponseEntity.ok("Dynamic consumer initialized successfully");
-        } catch (PulsarClientException e) {
-            return ResponseEntity.status(500).build(); // Handle exceptions appropriately
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400).body(e.getMessage()); // Bad request for unsupported schema
-        } catch (MalformedURLException e) {
-            return ResponseEntity.status(400).body(e.getMessage());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return ResponseEntity.status(500).build();
         }
     }
 

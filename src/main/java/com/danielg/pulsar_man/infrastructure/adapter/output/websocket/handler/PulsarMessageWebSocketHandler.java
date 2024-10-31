@@ -19,12 +19,12 @@ import java.time.ZoneOffset;
 import java.util.*;
 
 public class PulsarMessageWebSocketHandler extends TextWebSocketHandler {
-    private PulsarConsumerManager pulsarConsumerState;
+    private PulsarConsumerManager pulsarConsumerManager;
     private final List<WebSocketSession> sessions = new ArrayList<>();
     private final ObjectMapper objectMapper;
 
-    public PulsarMessageWebSocketHandler(PulsarConsumerManager pulsarConsumerState) {
-        this.pulsarConsumerState = pulsarConsumerState;
+    public PulsarMessageWebSocketHandler(PulsarConsumerManager pulsarConsumerManager) {
+        this.pulsarConsumerManager = pulsarConsumerManager;
         this.objectMapper = new ObjectMapper();
     }
 
@@ -41,22 +41,17 @@ public class PulsarMessageWebSocketHandler extends TextWebSocketHandler {
         System.out.println("WebSocket connection closed with session: " + session.getId());
     }
 
-    // Extract the topic from the incoming WebSocket message
-    private String parseTopicFromMessage(String message) {
-        return message.split(":")[1].replaceAll("[\"}]", "").trim();
-    }
-
     // Consume Pulsar messages and send them to the client via WebSocket
     public void startPulsarConsumer(WebSocketSession session) {
         new Thread(() -> {
             try {
-                Consumer<?> consumer = this.pulsarConsumerState.getPulsarConsumer().getConsumer();
+                Consumer<?> consumer = this.pulsarConsumerManager.getPulsarConsumer().getConsumer();
 
                 while (session.isOpen()) {
                     Message<?> msg = consumer.receive();
                     String msgValue;
 
-                    String schemaFile = this.pulsarConsumerState.getPulsarConsumer().getSchemaFile();
+                    String schemaFile = this.pulsarConsumerManager.getPulsarConsumer().getSchemaFile();
                     if (schemaFile != null) {
                         Descriptors.Descriptor descriptor = ProtoUtils.loadProtoDescriptor("uploads/" + schemaFile);
                         msgValue = DynamicMessage.parseFrom(descriptor, (byte[]) msg.getData()).toString();
@@ -73,7 +68,6 @@ public class PulsarMessageWebSocketHandler extends TextWebSocketHandler {
                     // Acknowledge the message after sending
                     consumer.acknowledge(msg);
                 }
-
                 consumer.close();
             } catch (Exception e) {
                 e.printStackTrace();

@@ -7,10 +7,8 @@ import com.danielg.pulsar_man.application.port.input.file.UploadFileUseCase;
 import com.danielg.pulsar_man.infrastructure.adapter.input.rest.data.request.PulsarConsumerRequest;
 import com.danielg.pulsar_man.infrastructure.adapter.output.pulsar.manager.PulsarClientManager;
 import com.danielg.pulsar_man.infrastructure.adapter.output.pulsar.manager.PulsarConsumerManager;
-import com.danielg.pulsar_man.utils.ProtoUtils;
 import com.danielg.pulsar_man.utils.PulsarSubcriptionUtils;
 import com.danielg.pulsar_man.utils.SchemaProvider;
-import com.google.protobuf.Descriptors;
 import jakarta.annotation.PreDestroy;
 import org.apache.pulsar.client.api.*;
 import org.slf4j.Logger;
@@ -75,35 +73,6 @@ public class ConsumerService implements InitializeConsumerUseCase, ConsumeMessag
         }
 
     }
-
-
-    /*@Override
-    public void initializeDynamicConsumer() throws Exception {
-        Consumer<?> consumer = pulsarClientManagerState.getPulsarClientProvider().getPulsarClient().newConsumer(null)
-                .topic("dummy.proto.topic")
-                .subscriptionName("abc123")
-                .subscriptionType(SubscriptionType.Shared)
-                .subscribe();
-
-
-        Descriptors.Descriptor descriptor = ProtoUtils.loadProtoDescriptor("uploads/asdf");
-
-        while (true) {
-            Message<?> msg = consumer.receive();
-            try {
-                // Use the descriptor to parse the message dynamically
-                DynamicMessage dynamicMessage = DynamicMessage.parseFrom(descriptor, (byte[]) msg.getData());
-                System.out.println("Received message: " + dynamicMessage);
-                consumer.acknowledge(msg);
-            } catch (Exception e) {
-                System.err.println("Failed to parse message:");
-                e.printStackTrace();
-                consumer.negativeAcknowledge(msg);
-            }
-        }
-
-    }*/
-
 
     @Override
     public List<String> consumeMessages(Integer messageCount) throws PulsarClientException {

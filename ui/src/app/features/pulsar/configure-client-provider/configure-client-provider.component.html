@@ -1,0 +1,7 @@
+<div class="configure-container">
+    <p-floatLabel class="float-label-container">
+        <input class="input" pInputText id="serviceUrl" [(ngModel)]="inputText"/>
+        <label for="serviceUrl">Service URL</label>
+    </p-floatLabel>
+    <p-button label="Confirm" [outlined]="true" (click)="submitPulsarClientProvider()"/>
+</div>
