@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package com.example.protobuf;
+package protobuf;
 
 message MyMessage {
   string id = 1;

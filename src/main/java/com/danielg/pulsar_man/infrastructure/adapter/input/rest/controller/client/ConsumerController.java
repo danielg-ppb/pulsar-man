@@ -4,6 +4,7 @@ import com.danielg.pulsar_man.application.port.input.consumer.ConsumeMessagesUse
 import com.danielg.pulsar_man.application.port.input.consumer.InitializeConsumerUseCase;
 import com.danielg.pulsar_man.application.port.input.consumer.InitializeDynamicConsumer;
 import com.danielg.pulsar_man.infrastructure.adapter.input.rest.data.request.PulsarConsumerRequest;
+import com.danielg.pulsar_man.infrastructure.adapter.input.rest.data.response.GenericResponse;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,25 +26,29 @@ public class ConsumerController {
     }
 
     @PostMapping("/initialize")
-    public ResponseEntity<String> initializeConsumer(@RequestBody PulsarConsumerRequest pulsarConsumerDto) {
+    public ResponseEntity<GenericResponse> initializeConsumer(@RequestBody PulsarConsumerRequest pulsarConsumerDto) {
         try {
             initializeConsumerUseCase.initializeConsumer(pulsarConsumerDto);
-            return ResponseEntity.ok("Consumer initialized successfully");
+            GenericResponse response = new GenericResponse("Consumer initialized successfully");
+            return ResponseEntity.ok(response);
         } catch (PulsarClientException e) {
             return ResponseEntity.status(500).build(); // Handle exceptions appropriately
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400).body(e.getMessage()); // Bad request for unsupported schema
+            GenericResponse response = new GenericResponse("Consumer initialized successfully");
+            return ResponseEntity.status(400).body(response); // Bad request for unsupported schema
         }
     }
 
     @PostMapping("/dynamic-initialize")
-    public ResponseEntity<String> initializeDynamicConsumer(@RequestParam String topicName, @RequestParam String subscriptionName,
-                                                            @RequestParam String schemaType, @RequestParam String initialPosition,
-                                                            @RequestParam(required = false) MultipartFile protoFile) {
+    public ResponseEntity<GenericResponse> initializeDynamicConsumer(@RequestParam String topicName, @RequestParam String subscriptionName,
+                                                                     @RequestParam String schemaType, @RequestParam String initialPosition,
+                                                                     @RequestParam(required = false) MultipartFile protoFile) {
         try {
             PulsarConsumerRequest pulsarConsumerDto = new PulsarConsumerRequest(topicName, subscriptionName, schemaType, initialPosition);
             initializeDynamicConsumer.initializeDynamicConsumer(pulsarConsumerDto, protoFile);
-            return ResponseEntity.ok("Dynamic consumer initialized successfully");
+            GenericResponse response = new GenericResponse("Dynamic consumer initialized successfully");
+
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.status(500).build();
         }

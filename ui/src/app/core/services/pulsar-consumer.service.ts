@@ -1,9 +1,27 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
+import {HttpClient} from "@angular/common/http";
+import {ClientProvider} from "../../shared/model/client-provider";
+import {Observable} from "rxjs";
+import {environment} from "../../../environments/environment";
+import {ConsumerConfig} from "../../shared/model/consumer-config";
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class PulsarConsumerService {
 
-  constructor() { }
+    constructor(private http: HttpClient) {
+    }
+
+    postPulsarDynamicConsumer(file: File, consumerConfig: ConsumerConfig): Observable<any> {
+        const formData = new FormData();
+        formData.append('protoFile', file, file.name);
+        formData.append('topicName', consumerConfig.topicName);
+        formData.append('subscriptionName', consumerConfig.subscriptionName);
+        formData.append('schemaType', consumerConfig.schemaType);
+        formData.append('initialPosition', consumerConfig.initialPosition);
+
+
+        return this.http.post(`${environment.apiUrl}/pulsar-consumer/dynamic-initialize`, formData);
+    }
 }

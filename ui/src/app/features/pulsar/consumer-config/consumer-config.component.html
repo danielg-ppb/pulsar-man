@@ -1,0 +1,54 @@
+<!-- form-example.component.html -->
+<form [formGroup]="formGroup" (ngSubmit)="onSubmit()" class="p-fluid form-container">
+    <p-toast></p-toast>
+    <div class="p-field">
+        <p-floatLabel class="float-label-container">
+            <input class="input" id="topicName" pInputText formControlName="topicName"/>
+            <label for="topicName">Service URL</label>
+        </p-floatLabel>
+    </div>
+
+    <div class="p-field">
+        <p-floatLabel class="float-label-container">
+            <input class="input" id="subscriptionName" pInputText formControlName="subscriptionName"/>
+            <label for="subscriptionName">Subscription Name</label>
+        </p-floatLabel>
+    </div>
+
+    <div class="p-field">
+        <p-floatLabel class="float-label-container">
+            <p-dropdown
+                [options]="schemaTypes"
+                formControlName="schemaType"
+                optionLabel="value"
+                optionValue="id"
+                id="float-label"
+            />
+            <label for="float-label">Schema Type</label>
+        </p-floatLabel>
+    </div>
+
+    <div class="p-field">
+        <p-floatLabel class="float-label-container">
+            <input class="input" id="initialPosition" pInputText formControlName="initialPosition"/>
+            <label for="initialPosition">Initial Position</label>
+        </p-floatLabel>
+    </div>
+
+    <p-fileUpload
+        mode="basic"
+        chooseLabel="Choose Schema Type"
+        chooseIcon="pi pi-upload"
+        name="demo[]"
+        url="https://www.primefaces.org/cdn/api/upload.php"
+        maxFileSize="1000000"
+        (onSelect)="onFileChange($event)"
+        *ngIf="formGroup.get('schemaType')?.value === 'protobuf'"></p-fileUpload>
+    <!--(onUpload)="onUpload($event)"-->
+
+
+    <button pButton type="submit" label="Submit"></button>
+</form>
+
+
+

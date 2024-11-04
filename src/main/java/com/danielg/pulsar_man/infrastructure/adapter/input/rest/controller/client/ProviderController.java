@@ -2,6 +2,7 @@ package com.danielg.pulsar_man.infrastructure.adapter.input.rest.controller.clie
 
 import com.danielg.pulsar_man.application.port.input.provider.InitializeClientProviderUseCase;
 import com.danielg.pulsar_man.infrastructure.adapter.input.rest.data.request.PulsarServiceUrlRequest;
+import com.danielg.pulsar_man.infrastructure.adapter.input.rest.data.response.GenericResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,13 +19,15 @@ public class ProviderController {
     }
 
     @PostMapping("/service-url")
-    public ResponseEntity<String> setServiceUrl(@RequestBody PulsarServiceUrlRequest pulsarServiceUrlDto) {
+    public ResponseEntity<GenericResponse> setServiceUrl(@RequestBody PulsarServiceUrlRequest pulsarServiceUrlDto) {
         try {
             this.initializeClientProviderUseCase.initializeWithServiceUrl(pulsarServiceUrlDto.getServiceUrl());
-            return ResponseEntity.ok("Service URL set successfully");
+            GenericResponse response = new GenericResponse("Service URL set successfully");
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             System.out.println(e);
-            return ResponseEntity.badRequest().body("Error setting service URL");
+            GenericResponse response = new GenericResponse(e.getMessage());
+            return ResponseEntity.badRequest().body(response);
         }
     }
 

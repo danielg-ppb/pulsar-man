@@ -22,6 +22,16 @@ public class PulsarConsumer {
         this.schemaProvider = SchemaProvider.getSchema(schemaType);
         this.initialPosition = PulsarSubcriptionUtils.pulsarInitialPositionFromString(initialPosition);
         this.schemaFile = schemaFile;
+    }
 
+    public String toString() {
+        return "PulsarConsumer{" +
+                "consumer=" + consumer +
+                ", topicName='" + topicName + '\'' +
+                ", subscriptionName='" + subscriptionName + '\'' +
+                ", schemaProvider=" + schemaProvider +
+                ", initialPosition=" + initialPosition +
+                ", schemaFile='" + schemaFile + '\'' +
+                '}';
     }
 }

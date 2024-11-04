@@ -11,7 +11,7 @@ export class PulsarProviderService {
     constructor(private http: HttpClient) {
     }
 
-    postPulsarProviderServiceUrl(clientProvider: ClientProvider): Observable<string> {
+    postPulsarProviderServiceUrl(clientProvider: ClientProvider): Observable<any> {
         return this.http.post<any>(`${environment.apiUrl}/pulsar-provider/service-url`, clientProvider);
     }
 }

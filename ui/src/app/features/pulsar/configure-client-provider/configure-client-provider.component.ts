@@ -29,7 +29,7 @@ export class ConfigureClientProviderComponent {
     submitPulsarClientProvider() {
         this.pulsarProviderService.postPulsarProviderServiceUrl({serviceUrl: this.inputText}).subscribe({
             next: () => {
-                this.navigateToListMessages();
+                this.navigateToConsumerConfig();
             },
             error: error => {
                 console.error('Error saving pulsar provider service url', error);
@@ -37,8 +37,8 @@ export class ConfigureClientProviderComponent {
         });
     }
 
-    navigateToListMessages() {
+    navigateToConsumerConfig() {
         // navigate to list-messages component
-        this.router.navigate(['/list-messages']);
+        this.router.navigate(['/configure-consumer']);
     }
 }
