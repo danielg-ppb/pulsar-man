@@ -1,7 +1,7 @@
 package com.danielg.pulsar_man.infrastructure.adapter.output.websocket.config;
 
 import com.danielg.pulsar_man.infrastructure.adapter.output.websocket.handler.PulsarMessageWebSocketHandler;
-import com.danielg.pulsar_man.infrastructure.adapter.output.pulsar.manager.PulsarConsumerManager;
+import com.danielg.pulsar_man.infrastructure.pulsar.factory.PulsarConsumerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
@@ -11,9 +11,9 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @Configuration
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
-        private final PulsarConsumerManager pulsarConsumerState;
+        private final PulsarConsumerFactory pulsarConsumerState;
 
-    public WebSocketConfig(PulsarConsumerManager pulsarConsumerState) {
+    public WebSocketConfig(PulsarConsumerFactory pulsarConsumerState) {
         this.pulsarConsumerState = pulsarConsumerState;
     }
 

@@ -5,7 +5,7 @@ import com.danielg.pulsar_man.application.port.input.topic.ListNonPartitionedTop
 import com.danielg.pulsar_man.application.port.input.topic.ListPartitionedTopicsUseCase;
 import com.danielg.pulsar_man.application.port.input.topic.ListTopicsUseCase;
 import com.danielg.pulsar_man.infrastructure.adapter.input.rest.data.response.TopicListResponse;
-import com.danielg.pulsar_man.infrastructure.adapter.output.pulsar.manager.PulsarAdminManager;
+import com.danielg.pulsar_man.infrastructure.pulsar.factory.PulsarAdminFactory;
 import com.danielg.pulsar_man.utils.PulsarTopicUtils;
 import org.apache.pulsar.client.admin.PulsarAdminException;
 import org.apache.pulsar.common.partition.PartitionedTopicMetadata;
@@ -22,10 +22,10 @@ import java.util.stream.Collectors;
 public class TopicRetrievalService implements ListTopicsUseCase, ListPartitionedTopicsUseCase, ListNonPartitionedTopicsUseCase, GetPartitionedTopicStats {
     private static final Logger logger = LoggerFactory.getLogger(TopicRetrievalService.class);
 
-    private PulsarAdminManager pulsarAdminManager;
+    private PulsarAdminFactory pulsarAdminFactory;
 
-    public TopicRetrievalService(PulsarAdminManager pulsarAdminState) {
-        this.pulsarAdminManager = pulsarAdminState;
+    public TopicRetrievalService(PulsarAdminFactory pulsarAdminState) {
+        this.pulsarAdminFactory = pulsarAdminState;
     }
 
     @Override
@@ -33,8 +33,8 @@ public class TopicRetrievalService implements ListTopicsUseCase, ListPartitioned
         try {
             String namespacePath = tenant + "/" + namespace;
             //partitioned and non partitioned
-            List<String> topics = pulsarAdminManager.getPulsarAdmin().topics().getList(namespacePath);
-            topics.addAll(pulsarAdminManager.getPulsarAdmin().topics().getPartitionedTopicList(namespacePath));
+            List<String> topics = pulsarAdminFactory.getPulsarAdmin().topics().getList(namespacePath);
+            topics.addAll(pulsarAdminFactory.getPulsarAdmin().topics().getPartitionedTopicList(namespacePath));
             return new TopicListResponse(topics);
         } catch (Exception e) {
             logger.error("Failed to list topics", e);
@@ -47,7 +47,7 @@ public class TopicRetrievalService implements ListTopicsUseCase, ListPartitioned
         String namespacePath = tenant + "/" + namespace;
         try {
             // Get all topics in the namespace
-            List<String> allTopics = pulsarAdminManager.getPulsarAdmin().topics().getList(namespacePath);
+            List<String> allTopics = pulsarAdminFactory.getPulsarAdmin().topics().getList(namespacePath);
             logger.info(allTopics.toString());
 
             // Filter out topics that are partitioned
@@ -70,7 +70,7 @@ public class TopicRetrievalService implements ListTopicsUseCase, ListPartitioned
         try {
             String namespacePath = tenant + "/" + namespace;
             //partitioned and non partitioned
-            return new TopicListResponse(pulsarAdminManager.getPulsarAdmin().topics().getPartitionedTopicList(namespacePath));
+            return new TopicListResponse(pulsarAdminFactory.getPulsarAdmin().topics().getPartitionedTopicList(namespacePath));
         } catch (Exception e) {
             logger.error("Failed to list topics", e);
             throw new RuntimeException("Failed to list topics", e);
@@ -84,12 +84,12 @@ public class TopicRetrievalService implements ListTopicsUseCase, ListPartitioned
 
         try {
             // Retrieve the partition metadata
-            PartitionedTopicMetadata metadata = pulsarAdminManager.getPulsarAdmin().topics().getPartitionedTopicMetadata(fullTopicName);
+            PartitionedTopicMetadata metadata = pulsarAdminFactory.getPulsarAdmin().topics().getPartitionedTopicMetadata(fullTopicName);
 
             // For each partition, get its stats
             for (int i = 0; i < metadata.partitions; i++) {
                 String partitionName = fullTopicName + "-partition-" + i;
-                partitionStats.add(pulsarAdminManager.getPulsarAdmin().topics().getStats(partitionName));
+                partitionStats.add(pulsarAdminFactory.getPulsarAdmin().topics().getStats(partitionName));
             }
 
         } catch (PulsarAdminException e) {

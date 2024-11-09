@@ -1,4 +1,4 @@
-package com.danielg.pulsar_man.infrastructure.adapter.output.pulsar.manager;
+package com.danielg.pulsar_man.infrastructure.pulsar.factory;
 
 import com.danielg.pulsar_man.domain.model.PulsarClientProvider;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Getter
 @Component
-public class PulsarClientManager {
+public class PulsarClientFactory {
     private PulsarClientProvider pulsarClientProvider;
 
     public synchronized void initializePulsarClientProvider(String serviceUrl) {
@@ -25,7 +25,7 @@ public class PulsarClientManager {
         return this.pulsarClientProvider;
     }
 
-    public synchronized void setPulsarClientProviderToNull(){
+    public synchronized void setPulsarClientProviderToNull() {
         this.pulsarClientProvider = null;
     }
 

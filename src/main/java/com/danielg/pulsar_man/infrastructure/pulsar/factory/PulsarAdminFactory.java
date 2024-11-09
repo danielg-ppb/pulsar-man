@@ -1,11 +1,11 @@
-package com.danielg.pulsar_man.infrastructure.adapter.output.pulsar.manager;
+package com.danielg.pulsar_man.infrastructure.pulsar.factory;
 
 import org.apache.pulsar.client.admin.PulsarAdmin;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PulsarAdminManager {
+public class PulsarAdminFactory {
     private PulsarAdmin pulsarAdmin;
 
     public synchronized void initializePulsarAdmin(String serviceUrl) throws PulsarClientException {

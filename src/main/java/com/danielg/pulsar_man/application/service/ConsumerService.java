@@ -5,8 +5,8 @@ import com.danielg.pulsar_man.application.port.input.consumer.InitializeConsumer
 import com.danielg.pulsar_man.application.port.input.consumer.InitializeDynamicConsumer;
 import com.danielg.pulsar_man.application.port.input.file.UploadFileUseCase;
 import com.danielg.pulsar_man.infrastructure.adapter.input.rest.data.request.PulsarConsumerRequest;
-import com.danielg.pulsar_man.infrastructure.adapter.output.pulsar.manager.PulsarClientManager;
-import com.danielg.pulsar_man.infrastructure.adapter.output.pulsar.manager.PulsarConsumerManager;
+import com.danielg.pulsar_man.infrastructure.pulsar.factory.PulsarClientFactory;
+import com.danielg.pulsar_man.infrastructure.pulsar.factory.PulsarConsumerFactory;
 import com.danielg.pulsar_man.utils.PulsarSubcriptionUtils;
 import com.danielg.pulsar_man.utils.SchemaProvider;
 import jakarta.annotation.PreDestroy;
@@ -24,24 +24,24 @@ import java.util.concurrent.TimeUnit;
 public class ConsumerService implements InitializeConsumerUseCase, ConsumeMessagesUseCase, InitializeDynamicConsumer {
     private static final Logger logger = LoggerFactory.getLogger(ConsumerService.class);
 
-    private final PulsarClientManager pulsarClientManagerState;
-    private final PulsarConsumerManager pulsarConsumerState;
+    private final PulsarClientFactory pulsarClientFactory;
+    private final PulsarConsumerFactory pulsarConsumerFactory;
     private final UploadFileUseCase uploadFileUseCase;
 
-    public ConsumerService(PulsarClientManager pulsarClientManagerState, PulsarConsumerManager pulsarConsumerState, UploadFileUseCase uploadFileUseCase) {
-        this.pulsarClientManagerState = pulsarClientManagerState;
-        this.pulsarConsumerState = pulsarConsumerState;
+    public ConsumerService(PulsarClientFactory pulsarClientFactory, PulsarConsumerFactory pulsarConsumerFactory, UploadFileUseCase uploadFileUseCase) {
+        this.pulsarClientFactory = pulsarClientFactory;
+        this.pulsarConsumerFactory = pulsarConsumerFactory;
         this.uploadFileUseCase = uploadFileUseCase;
     }
 
     @Override
     public void initializeConsumer(PulsarConsumerRequest pulsarConsumerDto) throws PulsarClientException {
-        if (this.pulsarConsumerState.getPulsarConsumer() != null) {
+        if (this.pulsarConsumerFactory.getPulsarConsumer() != null) {
             this.closeConsumer();
         }
 
-        this.pulsarConsumerState.initializePulsarConsumer(
-                this.pulsarClientManagerState.getPulsarClientProvider().getPulsarClient()
+        this.pulsarConsumerFactory.initializePulsarConsumer(
+                this.pulsarClientFactory.getPulsarClientProvider().getPulsarClient()
                         .newConsumer(SchemaProvider.getSchema(pulsarConsumerDto.getSchemaType()))
                         .topic(pulsarConsumerDto.getTopicName())
                         .subscriptionName(pulsarConsumerDto.getSubscriptionName())
@@ -51,7 +51,7 @@ public class ConsumerService implements InitializeConsumerUseCase, ConsumeMessag
     }
 
     public void initializeDynamicConsumer(PulsarConsumerRequest pulsarConsumerDto, MultipartFile protoFile) throws Exception {
-        if (this.pulsarConsumerState.getPulsarConsumer() != null) {
+        if (this.pulsarConsumerFactory.getPulsarConsumer() != null) {
             this.closeConsumer();
         }
 
@@ -60,8 +60,8 @@ public class ConsumerService implements InitializeConsumerUseCase, ConsumeMessag
         Schema<?> schema = SchemaProvider.getSchema(pulsarConsumerDto.getSchemaType());
 
         if (pulsarConsumerDto.getSchemaType().equals("protobuf") && protoFileName != null) {
-            this.pulsarConsumerState.initializePulsarConsumer(
-                    this.pulsarClientManagerState.getPulsarClientProvider().getPulsarClient()
+            this.pulsarConsumerFactory.initializePulsarConsumer(
+                    this.pulsarClientFactory.getPulsarClientProvider().getPulsarClient()
                             .newConsumer()
                             .topic(pulsarConsumerDto.getTopicName())
                             .subscriptionName(pulsarConsumerDto.getSubscriptionName())
@@ -76,28 +76,28 @@ public class ConsumerService implements InitializeConsumerUseCase, ConsumeMessag
 
     @Override
     public List<String> consumeMessages(Integer messageCount) throws PulsarClientException {
-        logger.info("Consuming messages from topic: " + this.pulsarConsumerState.getPulsarConsumer().getTopicName());
+        logger.info("Consuming messages from topic: " + this.pulsarConsumerFactory.getPulsarConsumer().getTopicName());
         List<String> messages = new ArrayList<>();
 
         for (int i = 0; i < messageCount; i++) {
-            Message<?> msg = this.pulsarConsumerState.getPulsarConsumer().getConsumer().receive(1, TimeUnit.SECONDS);
+            Message<?> msg = this.pulsarConsumerFactory.getPulsarConsumer().getConsumer().receive(1, TimeUnit.SECONDS);
             if (msg == null) {
                 break; // No more messages to consume
             }
             messages.add(msg.getValue().toString());
-            this.pulsarConsumerState.getPulsarConsumer().getConsumer().acknowledge(msg);
+            this.pulsarConsumerFactory.getPulsarConsumer().getConsumer().acknowledge(msg);
         }
         return messages;
     }
 
     public synchronized void closeConsumer() {
-        if (this.pulsarConsumerState.getPulsarConsumer() != null && this.pulsarConsumerState.getPulsarConsumer().getConsumer() != null) {
+        if (this.pulsarConsumerFactory.getPulsarConsumer() != null && this.pulsarConsumerFactory.getPulsarConsumer().getConsumer() != null) {
             try {
-                this.pulsarConsumerState.getPulsarConsumer().getConsumer().close(); // Close the Pulsar consumer
+                this.pulsarConsumerFactory.getPulsarConsumer().getConsumer().close(); // Close the Pulsar consumer
             } catch (Exception e) {
                 logger.error("Cannot close pulsar consumer", e);
             } finally {
-                this.pulsarConsumerState.setPulsarConsumerToNull(); // Ensure the reference is cleared
+                this.pulsarConsumerFactory.setPulsarConsumerToNull(); // Ensure the reference is cleared
             }
         }
     }

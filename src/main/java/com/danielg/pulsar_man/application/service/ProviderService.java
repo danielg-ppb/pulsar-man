@@ -1,7 +1,7 @@
 package com.danielg.pulsar_man.application.service;
 
 import com.danielg.pulsar_man.application.port.input.provider.InitializeClientProviderUseCase;
-import com.danielg.pulsar_man.infrastructure.adapter.output.pulsar.manager.PulsarClientManager;
+import com.danielg.pulsar_man.infrastructure.pulsar.factory.PulsarClientFactory;
 import jakarta.annotation.PreDestroy;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.slf4j.Logger;
@@ -12,9 +12,9 @@ import org.springframework.stereotype.Service;
 public class ProviderService implements InitializeClientProviderUseCase {
     private static final Logger logger = LoggerFactory.getLogger(ProviderService.class);
 
-    private final PulsarClientManager pulsarClientManagerState;
+    private final PulsarClientFactory pulsarClientManagerState;
 
-    public ProviderService(PulsarClientManager pulsarClientManagerState) {
+    public ProviderService(PulsarClientFactory pulsarClientManagerState) {
         this.pulsarClientManagerState = pulsarClientManagerState;
     }
 

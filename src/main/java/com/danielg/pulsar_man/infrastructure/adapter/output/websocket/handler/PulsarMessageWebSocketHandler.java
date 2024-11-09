@@ -1,7 +1,7 @@
 package com.danielg.pulsar_man.infrastructure.adapter.output.websocket.handler;
 
 import com.danielg.pulsar_man.domain.model.WebSocketInputMessage;
-import com.danielg.pulsar_man.infrastructure.adapter.output.pulsar.manager.PulsarConsumerManager;
+import com.danielg.pulsar_man.infrastructure.pulsar.factory.PulsarConsumerFactory;
 import com.danielg.pulsar_man.utils.ProtoUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.Descriptors;
@@ -19,12 +19,12 @@ import java.time.ZoneOffset;
 import java.util.*;
 
 public class PulsarMessageWebSocketHandler extends TextWebSocketHandler {
-    private PulsarConsumerManager pulsarConsumerManager;
+    private PulsarConsumerFactory pulsarConsumerFactory;
     private final List<WebSocketSession> sessions = new ArrayList<>();
     private final ObjectMapper objectMapper;
 
-    public PulsarMessageWebSocketHandler(PulsarConsumerManager pulsarConsumerManager) {
-        this.pulsarConsumerManager = pulsarConsumerManager;
+    public PulsarMessageWebSocketHandler(PulsarConsumerFactory pulsarConsumerFactory) {
+        this.pulsarConsumerFactory = pulsarConsumerFactory;
         this.objectMapper = new ObjectMapper();
     }
 
@@ -45,13 +45,13 @@ public class PulsarMessageWebSocketHandler extends TextWebSocketHandler {
     public void startPulsarConsumer(WebSocketSession session) {
         new Thread(() -> {
             try {
-                Consumer<?> consumer = this.pulsarConsumerManager.getPulsarConsumer().getConsumer();
+                Consumer<?> consumer = this.pulsarConsumerFactory.getPulsarConsumer().getConsumer();
 
                 while (session.isOpen()) {
                     Message<?> msg = consumer.receive();
                     String msgValue;
 
-                    String schemaFile = this.pulsarConsumerManager.getPulsarConsumer().getSchemaFile();
+                    String schemaFile = this.pulsarConsumerFactory.getPulsarConsumer().getSchemaFile();
                     if (schemaFile != null) {
                         Descriptors.Descriptor descriptor = ProtoUtils.loadProtoDescriptor("uploads/" + schemaFile);
                         msgValue = DynamicMessage.parseFrom(descriptor, (byte[]) msg.getData()).toString();

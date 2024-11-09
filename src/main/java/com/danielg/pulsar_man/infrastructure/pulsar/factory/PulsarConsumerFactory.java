@@ -1,4 +1,4 @@
-package com.danielg.pulsar_man.infrastructure.adapter.output.pulsar.manager;
+package com.danielg.pulsar_man.infrastructure.pulsar.factory;
 
 import com.danielg.pulsar_man.domain.model.PulsarConsumer;
 import com.danielg.pulsar_man.infrastructure.adapter.input.rest.data.request.PulsarConsumerRequest;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Getter
-public class PulsarConsumerManager {
+public class PulsarConsumerFactory {
     private PulsarConsumer pulsarConsumer;
 
     public synchronized void initializePulsarConsumer(Consumer<?> consumer, PulsarConsumerRequest pulsarConsumerDto, String schemaFile) {

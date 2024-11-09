@@ -3,7 +3,7 @@ package com.danielg.pulsar_man.application.service;
 import com.danielg.pulsar_man.application.port.input.subscription.BatchDeleteSubscriptionsUseCase;
 import com.danielg.pulsar_man.application.port.input.subscription.DeleteSubscriptionUseCase;
 import com.danielg.pulsar_man.application.port.input.subscription.ListSubscriptionsUseCase;
-import com.danielg.pulsar_man.infrastructure.adapter.output.pulsar.manager.PulsarAdminManager;
+import com.danielg.pulsar_man.infrastructure.pulsar.factory.PulsarAdminFactory;
 import com.danielg.pulsar_man.utils.PulsarTopicUtils;
 import org.apache.pulsar.client.admin.PulsarAdminException;
 import org.slf4j.Logger;
@@ -16,10 +16,10 @@ import java.util.List;
 public class SubscriptionService implements ListSubscriptionsUseCase, DeleteSubscriptionUseCase, BatchDeleteSubscriptionsUseCase {
     private static final Logger logger = LoggerFactory.getLogger(SubscriptionService.class);
 
-    private PulsarAdminManager pulsarAdminManager;
+    private PulsarAdminFactory pulsarAdminFactory;
 
-    public SubscriptionService(PulsarAdminManager pulsarAdminManager) {
-        this.pulsarAdminManager = pulsarAdminManager;
+    public SubscriptionService(PulsarAdminFactory pulsarAdminFactory) {
+        this.pulsarAdminFactory = pulsarAdminFactory;
     }
 
     //Same as consumer groups in kafka
@@ -27,7 +27,7 @@ public class SubscriptionService implements ListSubscriptionsUseCase, DeleteSubs
     public List<String> listSubscriptions(String tenant, String namespace, String topic) {
         try {
             String fullTopicName = PulsarTopicUtils.concatFullTopic(tenant, namespace, topic);
-            return pulsarAdminManager.getPulsarAdmin().topics().getSubscriptions(fullTopicName);
+            return pulsarAdminFactory.getPulsarAdmin().topics().getSubscriptions(fullTopicName);
         } catch (PulsarAdminException e) {
             logger.error("Failed to list subscriptions", e);
             throw new RuntimeException("Failed to list consumer groups (subscriptions) for topic: " + topic, e);
@@ -38,7 +38,7 @@ public class SubscriptionService implements ListSubscriptionsUseCase, DeleteSubs
     public void deleteSubscription(String tenant, String namespace, String topic, String subscriptionName) {
         String fullTopicName = PulsarTopicUtils.concatFullTopic(tenant, namespace, topic);
         try {
-            pulsarAdminManager.getPulsarAdmin().topics().deleteSubscription(fullTopicName, subscriptionName);
+            pulsarAdminFactory.getPulsarAdmin().topics().deleteSubscription(fullTopicName, subscriptionName);
             logger.info("Subscription '{}' deleted successfully for topic '{}'.", subscriptionName, fullTopicName);
         } catch (PulsarAdminException e) {
             logger.error("Failed to delete subscription: {} for topic: {}", subscriptionName, fullTopicName, e);
