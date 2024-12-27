@@ -18,6 +18,7 @@ export class PulsarConsumerService {
         formData.append('protoFile', file, file.name);
         formData.append('topicName', consumerConfig.topicName);
         formData.append('subscriptionName', consumerConfig.subscriptionName);
+        formData.append('subscriptionType', consumerConfig.subscriptionType);
         formData.append('schemaType', consumerConfig.schemaType);
         formData.append('initialPosition', consumerConfig.initialPosition);
 

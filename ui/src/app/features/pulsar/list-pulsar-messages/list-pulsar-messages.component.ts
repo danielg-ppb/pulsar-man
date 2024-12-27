@@ -1,7 +1,7 @@
 import {Component, ViewChild} from '@angular/core';
 import {Subscription} from "rxjs";
 import {ElementRef} from "react";
-import {DatePipe, NgForOf} from "@angular/common";
+import {DatePipe, JsonPipe, NgForOf} from "@angular/common";
 import {WebsocketService} from "../../../core/services/websocket-service";
 
 @Component({
@@ -9,7 +9,8 @@ import {WebsocketService} from "../../../core/services/websocket-service";
     standalone: true,
     imports: [
         DatePipe,
-        NgForOf
+        NgForOf,
+        JsonPipe
     ],
     templateUrl: './list-pulsar-messages.component.html',
     styleUrl: './list-pulsar-messages.component.scss'
@@ -26,8 +27,7 @@ export class ListPulsarMessagesComponent {
     ngOnInit(): void {
         // Subscribe to incoming messages from the WebSocket
         this.messageSubscription = this.webSocketService.getMessages().subscribe((message) => {
-            console.log(message);
-            this.messages.push(message); // Add new messages to the array
+            this.messages.push(message);
             this.scrollToBottom();
         });
     }

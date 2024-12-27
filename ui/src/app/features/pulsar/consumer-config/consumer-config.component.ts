@@ -13,7 +13,7 @@ import {ToastModule} from "primeng/toast";
 import {Router} from "@angular/router";
 
 
-interface SchemaType {
+interface DropdownOption {
     id: string;
     value: string;
 }
@@ -39,14 +39,23 @@ interface SchemaType {
 export class ConsumerConfigComponent implements OnInit {
     formGroup!: FormGroup;
     currentFile?: File;
-    schemaTypes: SchemaType[] = [
+    schemaTypes: DropdownOption[] = [
         {id: 'string', value: 'String'},
         {id: 'avro', value: 'Avro'},
         {id: 'json', value: 'JSON'},
         {id: 'protobuf', value: 'Protobuf'},
         {id: 'binary', value: 'Binary'}
     ];
-
+    subscriptionTypes: DropdownOption[] = [
+        {id: 'exclusive', value: 'Exclusive'},
+        {id: 'failover', value: 'Failover'},
+        {id: 'shared', value: 'Shared'},
+        {id: 'key_shared', value: 'Key_Shared'}
+    ];
+    initialPositions: DropdownOption[] = [
+        {id: 'earliest', value: 'Earliest'},
+        {id: 'latest', value: 'Latest'}
+    ];
 
     constructor(private fb: FormBuilder,
                 private messageService: MessageService,
@@ -56,8 +65,9 @@ export class ConsumerConfigComponent implements OnInit {
 
     ngOnInit(): void {
         this.formGroup = this.fb.group({
-            topicName: ['dummy.proto.topic'],
-            subscriptionName: ['subscription2'],
+            topicName: ['persistent://gst/trading/topic-mapped-entities'],
+            subscriptionName: ['entity-manager-subscription'],
+            subscriptionType: ['Key_Shared'],
             schemaType: ['protobuf'],
             initialPosition: ['earliest']
         });
@@ -68,6 +78,7 @@ export class ConsumerConfigComponent implements OnInit {
         const consumerConfig: ConsumerConfig = {
             topicName: this.formGroup.get('topicName')?.value,
             subscriptionName: this.formGroup.get('subscriptionName')?.value,
+            subscriptionType: this.formGroup.get('subscriptionType')?.value,
             schemaType: this.formGroup.get('schemaType')?.value,
             initialPosition: this.formGroup.get('initialPosition')?.value
         }

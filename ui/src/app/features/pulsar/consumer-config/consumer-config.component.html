@@ -18,20 +18,39 @@
     <div class="p-field">
         <p-floatLabel class="float-label-container">
             <p-dropdown
-                [options]="schemaTypes"
-                formControlName="schemaType"
+                [options]="subscriptionTypes"
+                formControlName="subscriptionType"
                 optionLabel="value"
                 optionValue="id"
-                id="float-label"
+                id="subscriptionType-label"
             />
-            <label for="float-label">Schema Type</label>
+            <label for="subscriptionType-label">Subscription Type</label>
         </p-floatLabel>
     </div>
 
     <div class="p-field">
         <p-floatLabel class="float-label-container">
-            <input class="input" id="initialPosition" pInputText formControlName="initialPosition"/>
-            <label for="initialPosition">Initial Position</label>
+            <p-dropdown
+                [options]="schemaTypes"
+                formControlName="schemaType"
+                optionLabel="value"
+                optionValue="id"
+                id="schemaType-label"
+            />
+            <label for="schemaType-label">Schema Type</label>
+        </p-floatLabel>
+    </div>
+
+    <div class="p-field">
+        <p-floatLabel class="float-label-container">
+            <p-dropdown
+                [options]="initialPositions"
+                formControlName="initialPosition"
+                optionLabel="value"
+                optionValue="id"
+                id="initialPosition-label"
+            />
+            <label for="initialPosition-label">Initial Position</label>
         </p-floatLabel>
     </div>
 

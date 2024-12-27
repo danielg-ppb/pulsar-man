@@ -22,12 +22,17 @@ import {Router} from "@angular/router";
 })
 export class ConfigureClientProviderComponent {
     inputText: string = 'pulsar://localhost:6650';
+    token: string = "";
 
     constructor(private pulsarProviderService: PulsarProviderService, private router: Router) {
     }
 
     submitPulsarClientProvider() {
-        this.pulsarProviderService.postPulsarProviderServiceUrl({serviceUrl: this.inputText}).subscribe({
+        const clientProvider = {
+            serviceUrl: this.inputText,
+            token: this.token
+        }
+        this.pulsarProviderService.postPulsarProviderServiceUrl(clientProvider).subscribe({
             next: () => {
                 this.navigateToConsumerConfig();
             },

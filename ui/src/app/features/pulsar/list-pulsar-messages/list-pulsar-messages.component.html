@@ -3,7 +3,7 @@
     <div class="messages-container" #messagesContainer>
         <div *ngFor="let message of messages" class="message-line">
             <span class="date">{{ message.publishDate | date: 'short' }}</span>
-            <span> {{ message.value }}</span>
+            <span> {{ message.value | json }}</span>
             <hr>
         </div>
     </div>
