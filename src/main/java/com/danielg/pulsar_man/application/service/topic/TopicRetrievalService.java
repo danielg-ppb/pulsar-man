@@ -5,7 +5,7 @@ import com.danielg.pulsar_man.application.port.input.topic.ListNonPartitionedTop
 import com.danielg.pulsar_man.application.port.input.topic.ListPartitionedTopicsUseCase;
 import com.danielg.pulsar_man.application.port.input.topic.ListTopicsUseCase;
 import com.danielg.pulsar_man.infrastructure.adapter.input.rest.data.response.TopicListResponse;
-import com.danielg.pulsar_man.infrastructure.pulsar.factory.PulsarAdminFactory;
+import com.danielg.pulsar_man.infrastructure.pulsar.factory.AdminFactory;
 import com.danielg.pulsar_man.utils.PulsarTopicUtils;
 import org.apache.pulsar.client.admin.PulsarAdminException;
 import org.apache.pulsar.common.partition.PartitionedTopicMetadata;
@@ -22,9 +22,9 @@ import java.util.stream.Collectors;
 public class TopicRetrievalService implements ListTopicsUseCase, ListPartitionedTopicsUseCase, ListNonPartitionedTopicsUseCase, GetPartitionedTopicStats {
     private static final Logger logger = LoggerFactory.getLogger(TopicRetrievalService.class);
 
-    private PulsarAdminFactory pulsarAdminFactory;
+    private AdminFactory pulsarAdminFactory;
 
-    public TopicRetrievalService(PulsarAdminFactory pulsarAdminState) {
+    public TopicRetrievalService(AdminFactory pulsarAdminState) {
         this.pulsarAdminFactory = pulsarAdminState;
     }
 

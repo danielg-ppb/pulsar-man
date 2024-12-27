@@ -1,7 +1,7 @@
 package com.danielg.pulsar_man.application.service;
 
 import com.danielg.pulsar_man.application.port.input.namespace.ChangeNamespaceRetentionUseCase;
-import com.danielg.pulsar_man.infrastructure.pulsar.factory.PulsarAdminFactory;
+import com.danielg.pulsar_man.infrastructure.pulsar.factory.AdminFactory;
 import org.apache.pulsar.client.admin.PulsarAdminException;
 import org.apache.pulsar.common.policies.data.RetentionPolicies;
 import org.slf4j.Logger;
@@ -12,9 +12,9 @@ import org.springframework.stereotype.Service;
 public class NamespaceService implements ChangeNamespaceRetentionUseCase {
     private static final Logger logger = LoggerFactory.getLogger(NamespaceService.class);
 
-    private final PulsarAdminFactory pulsarAdminFactory;
+    private final AdminFactory pulsarAdminFactory;
 
-    public NamespaceService(PulsarAdminFactory pulsarAdminState) {
+    public NamespaceService(AdminFactory pulsarAdminState) {
         this.pulsarAdminFactory = pulsarAdminState;
     }
 

@@ -1,7 +1,8 @@
 package com.danielg.pulsar_man.application.service;
 
 import com.danielg.pulsar_man.application.port.input.provider.InitializeClientProviderUseCase;
-import com.danielg.pulsar_man.infrastructure.pulsar.factory.PulsarClientFactory;
+import com.danielg.pulsar_man.infrastructure.adapter.input.rest.data.request.PulsarServiceUrlRequest;
+import com.danielg.pulsar_man.infrastructure.pulsar.factory.ClientFactory;
 import jakarta.annotation.PreDestroy;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.slf4j.Logger;
@@ -12,25 +13,25 @@ import org.springframework.stereotype.Service;
 public class ProviderService implements InitializeClientProviderUseCase {
     private static final Logger logger = LoggerFactory.getLogger(ProviderService.class);
 
-    private final PulsarClientFactory pulsarClientManagerState;
+    private final ClientFactory clientFactory;
 
-    public ProviderService(PulsarClientFactory pulsarClientManagerState) {
-        this.pulsarClientManagerState = pulsarClientManagerState;
+    public ProviderService(ClientFactory clientFactory) {
+        this.clientFactory = clientFactory;
     }
 
     @Override
-    public void initializeWithServiceUrl(String serviceUrl) throws PulsarClientException {
-        this.pulsarClientManagerState.initializePulsarClientProvider(serviceUrl);
+    public void initializeWithServiceUrl(PulsarServiceUrlRequest pulsarServiceUrlRequest) {
+        this.clientFactory.initializePulsarClientProvider(pulsarServiceUrlRequest);
     }
 
     public synchronized void closePulsarClientProvider() {
-        if (this.pulsarClientManagerState != null) {
+        if (this.clientFactory != null) {
             try {
-                this.pulsarClientManagerState.getPulsarClientProvider().getPulsarClient().close();
+                this.clientFactory.getPulsarClientProvider().getPulsarClient().close();
             } catch (PulsarClientException e) {
                 logger.error("Cannot close pulsar client provider", e);
             } finally {
-                this.pulsarClientManagerState.setPulsarClientProviderToNull();
+                this.clientFactory.setPulsarClientProviderToNull();
             }
         }
     }

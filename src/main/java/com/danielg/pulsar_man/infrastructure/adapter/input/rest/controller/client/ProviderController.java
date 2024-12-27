@@ -21,7 +21,7 @@ public class ProviderController {
     @PostMapping("/service-url")
     public ResponseEntity<GenericResponse> setServiceUrl(@RequestBody PulsarServiceUrlRequest pulsarServiceUrlDto) {
         try {
-            this.initializeClientProviderUseCase.initializeWithServiceUrl(pulsarServiceUrlDto.getServiceUrl());
+            this.initializeClientProviderUseCase.initializeWithServiceUrl(pulsarServiceUrlDto);
             GenericResponse response = new GenericResponse("Service URL set successfully");
             return ResponseEntity.ok(response);
         } catch (Exception e) {

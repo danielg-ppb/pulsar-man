@@ -7,4 +7,5 @@ import lombok.NoArgsConstructor;
 @Data
 public class PulsarServiceUrlRequest {
     private String serviceUrl;
+    private String token;
 }

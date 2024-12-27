@@ -4,7 +4,7 @@ import com.danielg.pulsar_man.application.port.input.partition.GetNumberOfPartit
 import com.danielg.pulsar_man.application.port.input.partition.ListPartitionsFromTopicUseCase;
 import com.danielg.pulsar_man.infrastructure.adapter.input.rest.data.response.PartitionListResponse;
 import com.danielg.pulsar_man.infrastructure.adapter.input.rest.data.response.PartitionNumberResponse;
-import com.danielg.pulsar_man.infrastructure.pulsar.factory.PulsarAdminFactory;
+import com.danielg.pulsar_man.infrastructure.pulsar.factory.AdminFactory;
 import com.danielg.pulsar_man.utils.PulsarTopicUtils;
 import org.apache.pulsar.common.partition.PartitionedTopicMetadata;
 import org.slf4j.Logger;
@@ -15,9 +15,9 @@ import org.springframework.stereotype.Service;
 public class PartitionService implements GetNumberOfPartitionsFromTopicUseCase, ListPartitionsFromTopicUseCase {
     private static final Logger logger = LoggerFactory.getLogger(PartitionService.class);
 
-    private PulsarAdminFactory pulsarAdminFactory;
+    private AdminFactory pulsarAdminFactory;
 
-    public PartitionService(PulsarAdminFactory pulsarAdminFactory) {
+    public PartitionService(AdminFactory pulsarAdminFactory) {
         this.pulsarAdminFactory = pulsarAdminFactory;
     }
 

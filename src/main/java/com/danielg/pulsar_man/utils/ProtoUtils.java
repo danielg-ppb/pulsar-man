@@ -1,7 +1,10 @@
 package com.danielg.pulsar_man.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.DescriptorProtos;
 import com.google.protobuf.Descriptors;
+import com.google.protobuf.DynamicMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,5 +96,13 @@ public class ProtoUtils {
         if (process.waitFor() != 0) {
             throw new IOException("Failed to compile proto file: " + new String(process.getErrorStream().readAllBytes()));
         }
+    }
+
+    public static String convertDynamicMessageToJson(ObjectMapper objectMapper, DynamicMessage dynamicMessage) throws JsonProcessingException {
+        Map<String, Object> messageMap = new HashMap<>();
+        for (Map.Entry<Descriptors.FieldDescriptor, Object> field : dynamicMessage.getAllFields().entrySet()) {
+            messageMap.put(field.getKey().getName(), field.getValue());
+        }
+        return objectMapper.writeValueAsString(messageMap);
     }
 }

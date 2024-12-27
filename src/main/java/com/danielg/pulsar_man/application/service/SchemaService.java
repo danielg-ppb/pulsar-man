@@ -1,7 +1,7 @@
 package com.danielg.pulsar_man.application.service;
 
 import com.danielg.pulsar_man.application.port.input.schema.GetTopicSchemaUseCase;
-import com.danielg.pulsar_man.infrastructure.pulsar.factory.PulsarAdminFactory;
+import com.danielg.pulsar_man.infrastructure.pulsar.factory.AdminFactory;
 import com.danielg.pulsar_man.utils.PulsarTopicUtils;
 import org.apache.pulsar.common.schema.SchemaInfo;
 import org.slf4j.Logger;
@@ -12,9 +12,9 @@ import org.springframework.stereotype.Service;
 public class SchemaService implements GetTopicSchemaUseCase {
     private static final Logger logger = LoggerFactory.getLogger(SchemaService.class);
 
-    private PulsarAdminFactory pulsarAdminFactory;
+    private AdminFactory pulsarAdminFactory;
 
-    public SchemaService(PulsarAdminFactory pulsarAdminFactory) {
+    public SchemaService(AdminFactory pulsarAdminFactory) {
         this.pulsarAdminFactory = pulsarAdminFactory;
     }
 

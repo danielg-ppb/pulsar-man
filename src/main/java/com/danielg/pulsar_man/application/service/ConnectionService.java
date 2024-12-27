@@ -1,7 +1,7 @@
 package com.danielg.pulsar_man.application.service;
 
 import com.danielg.pulsar_man.application.port.input.connetion.InitializePulsarAdminConnectionUseCase;
-import com.danielg.pulsar_man.infrastructure.pulsar.factory.PulsarAdminFactory;
+import com.danielg.pulsar_man.infrastructure.pulsar.factory.AdminFactory;
 import jakarta.annotation.PreDestroy;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.slf4j.Logger;
@@ -12,27 +12,27 @@ import org.springframework.stereotype.Service;
 public class ConnectionService implements InitializePulsarAdminConnectionUseCase {
     private static final Logger logger = LoggerFactory.getLogger(ConnectionService.class);
 
-    private PulsarAdminFactory pulsarAdminState;
+    private AdminFactory adminFactory;
 
-    public ConnectionService(PulsarAdminFactory pulsarAdminState) {
-        this.pulsarAdminState = pulsarAdminState;
+    public ConnectionService(AdminFactory adminFactory) {
+        this.adminFactory = adminFactory;
     }
 
     public void initializePulsarAdmin(String serviceUrl) throws PulsarClientException {
-        if (pulsarAdminState != null && pulsarAdminState.getPulsarAdmin() != null) {
-            pulsarAdminState.getPulsarAdmin().close();
+        if (adminFactory != null && adminFactory.getPulsarAdmin() != null) {
+            adminFactory.getPulsarAdmin().close();
         }
 
-        if (pulsarAdminState != null) {
-            pulsarAdminState.initializePulsarAdmin(serviceUrl);
+        if (adminFactory != null) {
+            adminFactory.initializePulsarAdmin(serviceUrl);
         }
     }
 
     @PreDestroy
     public void closePulsarAdmin() {
-        if (pulsarAdminState != null && pulsarAdminState.getPulsarAdmin() != null) {
+        if (adminFactory != null && adminFactory.getPulsarAdmin() != null) {
             try {
-                pulsarAdminState.getPulsarAdmin().close();
+                adminFactory.getPulsarAdmin().close();
                 logger.info("PulsarAdmin connection closed successfully.");
             } catch (Exception e) {
                 logger.error("Failed to close PulsarAdmin connection: " + e.getMessage());

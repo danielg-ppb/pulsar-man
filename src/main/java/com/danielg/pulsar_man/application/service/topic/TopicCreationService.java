@@ -2,7 +2,7 @@ package com.danielg.pulsar_man.application.service.topic;
 
 import com.danielg.pulsar_man.application.port.input.topic.CreateNonPartitionedTopicUseCase;
 import com.danielg.pulsar_man.application.port.input.topic.CreatePartitionedTopicUseCase;
-import com.danielg.pulsar_man.infrastructure.pulsar.factory.PulsarAdminFactory;
+import com.danielg.pulsar_man.infrastructure.pulsar.factory.AdminFactory;
 import com.danielg.pulsar_man.utils.PulsarTopicUtils;
 import org.apache.pulsar.client.admin.PulsarAdminException;
 import org.slf4j.Logger;
@@ -13,9 +13,9 @@ import org.springframework.stereotype.Service;
 public class TopicCreationService implements CreateNonPartitionedTopicUseCase, CreatePartitionedTopicUseCase {
     private static final Logger logger = LoggerFactory.getLogger(TopicCreationService.class);
 
-    private final PulsarAdminFactory pulsarAdminFactory;
+    private final AdminFactory pulsarAdminFactory;
 
-    public TopicCreationService(PulsarAdminFactory pulsarAdminState) {
+    public TopicCreationService(AdminFactory pulsarAdminState) {
         this.pulsarAdminFactory = pulsarAdminState;
     }
 

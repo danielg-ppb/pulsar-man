@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Getter
-public class PulsarConsumerFactory {
+public class ConsumerFactory {
     private PulsarConsumer pulsarConsumer;
 
     public synchronized void initializePulsarConsumer(Consumer<?> consumer, PulsarConsumerRequest pulsarConsumerDto, String schemaFile) {

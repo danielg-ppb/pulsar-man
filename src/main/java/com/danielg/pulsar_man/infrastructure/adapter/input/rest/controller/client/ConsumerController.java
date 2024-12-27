@@ -41,10 +41,11 @@ public class ConsumerController {
 
     @PostMapping("/dynamic-initialize")
     public ResponseEntity<GenericResponse> initializeDynamicConsumer(@RequestParam String topicName, @RequestParam String subscriptionName,
-                                                                     @RequestParam String schemaType, @RequestParam String initialPosition,
+                                                                     @RequestParam String schemaType, @RequestParam String subscriptionType,
+                                                                     @RequestParam String initialPosition,
                                                                      @RequestParam(required = false) MultipartFile protoFile) {
         try {
-            PulsarConsumerRequest pulsarConsumerDto = new PulsarConsumerRequest(topicName, subscriptionName, schemaType, initialPosition);
+            PulsarConsumerRequest pulsarConsumerDto = new PulsarConsumerRequest(topicName, subscriptionName, schemaType, subscriptionType, initialPosition);
             initializeDynamicConsumer.initializeDynamicConsumer(pulsarConsumerDto, protoFile);
             GenericResponse response = new GenericResponse("Dynamic consumer initialized successfully");
 

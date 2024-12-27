@@ -2,8 +2,8 @@ package com.danielg.pulsar_man.application.service.client;
 
 import com.danielg.pulsar_man.application.port.input.client.GetClientStateUseCase;
 import com.danielg.pulsar_man.application.service.ConsumerService;
-import com.danielg.pulsar_man.infrastructure.pulsar.factory.PulsarClientFactory;
-import com.danielg.pulsar_man.infrastructure.pulsar.factory.PulsarConsumerFactory;
+import com.danielg.pulsar_man.infrastructure.pulsar.factory.ClientFactory;
+import com.danielg.pulsar_man.infrastructure.pulsar.factory.ConsumerFactory;
 import org.apache.pulsar.client.impl.conf.ClientConfigurationData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,12 +13,12 @@ import org.springframework.stereotype.Service;
 public class ClientStateService implements GetClientStateUseCase {
     private static final Logger logger = LoggerFactory.getLogger(ConsumerService.class);
 
-    private final PulsarClientFactory pulsarClientManagerState;
-    private final PulsarConsumerFactory pulsarConsumerState;
+    private final ClientFactory pulsarClientManagerState;
+    private final ConsumerFactory consumerFactory;
 
-    public ClientStateService(PulsarClientFactory pulsarClientManagerState, PulsarConsumerFactory pulsarConsumerState) {
+    public ClientStateService(ClientFactory pulsarClientManagerState, ConsumerFactory consumerFactory) {
         this.pulsarClientManagerState = pulsarClientManagerState;
-        this.pulsarConsumerState = pulsarConsumerState;
+        this.consumerFactory = consumerFactory;
     }
 
     @Override
@@ -29,7 +29,7 @@ public class ClientStateService implements GetClientStateUseCase {
             ClientConfigurationData configData = (ClientConfigurationData) confField.get(this.pulsarClientManagerState.getPulsarClientProvider().getPulsarClient());
 
             return "Service URL: " + configData.getServiceUrl() + "\n" +
-                    this.pulsarConsumerState.getPulsarConsumer().toString();
+                    this.consumerFactory.getPulsarConsumer().toString();
         }
 
         logger.error("Pulsar client is not initialized.");

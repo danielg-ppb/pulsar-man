@@ -3,7 +3,7 @@ package com.danielg.pulsar_man.application.service;
 import com.danielg.pulsar_man.application.port.input.subscription.BatchDeleteSubscriptionsUseCase;
 import com.danielg.pulsar_man.application.port.input.subscription.DeleteSubscriptionUseCase;
 import com.danielg.pulsar_man.application.port.input.subscription.ListSubscriptionsUseCase;
-import com.danielg.pulsar_man.infrastructure.pulsar.factory.PulsarAdminFactory;
+import com.danielg.pulsar_man.infrastructure.pulsar.factory.AdminFactory;
 import com.danielg.pulsar_man.utils.PulsarTopicUtils;
 import org.apache.pulsar.client.admin.PulsarAdminException;
 import org.slf4j.Logger;
@@ -16,9 +16,9 @@ import java.util.List;
 public class SubscriptionService implements ListSubscriptionsUseCase, DeleteSubscriptionUseCase, BatchDeleteSubscriptionsUseCase {
     private static final Logger logger = LoggerFactory.getLogger(SubscriptionService.class);
 
-    private PulsarAdminFactory pulsarAdminFactory;
+    private AdminFactory pulsarAdminFactory;
 
-    public SubscriptionService(PulsarAdminFactory pulsarAdminFactory) {
+    public SubscriptionService(AdminFactory pulsarAdminFactory) {
         this.pulsarAdminFactory = pulsarAdminFactory;
     }
 
