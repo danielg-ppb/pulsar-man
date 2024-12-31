@@ -3,7 +3,6 @@ package com.danielg.pulsar_man.infrastructure.adapter.output.websocket.handler;
 import com.danielg.pulsar_man.application.service.dynamic.DynamicConsumerService;
 import com.danielg.pulsar_man.infrastructure.protoc.ProtocExecutor;
 import com.danielg.pulsar_man.utils.DateUtils;
-import com.danielg.pulsar_man.utils.ProtoUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.GeneratedMessageV3;
 import com.google.protobuf.util.JsonFormat;
@@ -49,10 +48,12 @@ public class PulsarMessageWebSocketHandlerV2 extends TextWebSocketHandler {
 
     private void consumeMessages(WebSocketSession session) throws IOException, ClassNotFoundException {
         System.out.println("Session" + session);
-        String schemaFile = this.dynamicConsumerService.getDynamicConsumerSingleton().getSchemaFile();
+        String outerClassName = this.dynamicConsumerService.getDynamicConsumerSingleton().getOuterClassName();
+        String mainInnerClassName = this.dynamicConsumerService.getDynamicConsumerSingleton().getMainInnerClassName();
+        System.out.println("Dynamic stuff" + this.dynamicConsumerService.getDynamicConsumerSingleton());
 
         Class<? extends GeneratedMessageV3> protobufClass = this.protocExecutor
-                .getClassFromProtoSchema("MegaProto", "EntityEnvelopeProto");
+                .getClassFromProtoSchema(outerClassName, mainInnerClassName);
         try {
             Consumer<? extends GeneratedMessageV3> consumer =
                     (Consumer<? extends GeneratedMessageV3>) this.dynamicConsumerService.startConsumer(protobufClass);

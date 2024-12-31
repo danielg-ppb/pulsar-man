@@ -15,15 +15,13 @@ public class WebSocketConfig implements WebSocketConfigurer {
     private final DynamicConsumerService dynamicConsumerService;
     private final ProtocExecutor protocExecutor;
 
-    public WebSocketConfig(DynamicConsumerService dynamicConsumerService) {
+    public WebSocketConfig(DynamicConsumerService dynamicConsumerService, ProtocExecutor protocExecutor) {
         this.dynamicConsumerService = dynamicConsumerService;
-        this.protocExecutor = new ProtocExecutor();
+        this.protocExecutor = protocExecutor;
     }
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        /*registry.addHandler(new PulsarMessageWebSocketHandler(this.consumerFactory), "/pulsar/messages")
-                .setAllowedOrigins("*"); // Allow requests from all origins*/
         registry.addHandler(new PulsarMessageWebSocketHandlerV2(this.dynamicConsumerService, this.protocExecutor)
                         , "/pulsar/messages")
                 .setAllowedOrigins("*");

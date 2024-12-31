@@ -2,6 +2,7 @@ package com.danielg.pulsar_man.application.service.dynamic;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.apache.pulsar.client.api.SubscriptionInitialPosition;
 import org.apache.pulsar.client.api.SubscriptionType;
 import org.springframework.stereotype.Component;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Getter
 @Setter
+@ToString
 public class DynamicConsumerSingleton {
     private String topicName;
     private String subscriptionName;

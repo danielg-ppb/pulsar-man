@@ -49,6 +49,7 @@ public class ConsumerController {
     public ResponseEntity<GenericResponse> initializeDynamicConsumer(@Valid @ModelAttribute DynamicConsumerRequest request,
                                                                      @RequestParam(required = false) MultipartFile protoFile) {
         try {
+            System.out.println("Request: " + request);
             createDynamicConsumerUseCase.createDynamicConsumer(request, protoFile);
             GenericResponse response = new GenericResponse("Dynamic consumer initialized successfully");
 

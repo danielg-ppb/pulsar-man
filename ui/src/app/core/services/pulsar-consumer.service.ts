@@ -21,6 +21,8 @@ export class PulsarConsumerService {
         formData.append('subscriptionType', consumerConfig.subscriptionType);
         formData.append('schemaType', consumerConfig.schemaType);
         formData.append('initialPosition', consumerConfig.initialPosition);
+        formData.append('outerClassName', consumerConfig.outerClassName);
+        formData.append('mainInnerClassName', consumerConfig.mainInnerClassName);
 
 
         return this.http.post(`${environment.apiUrl}/pulsar-consumer/dynamic-initialize`, formData);
