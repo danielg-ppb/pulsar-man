@@ -4,4 +4,6 @@ export interface ConsumerConfig {
     subscriptionType: string;
     schemaType: string;
     initialPosition: string;
+    outerClassName: string;
+    mainInnerClassName: string;
 }

@@ -47,10 +47,10 @@ export class ConsumerConfigComponent implements OnInit {
         {id: 'binary', value: 'Binary'}
     ];
     subscriptionTypes: DropdownOption[] = [
-        {id: 'exclusive', value: 'Exclusive'},
-        {id: 'failover', value: 'Failover'},
-        {id: 'shared', value: 'Shared'},
-        {id: 'key_shared', value: 'Key_Shared'}
+        {id: 'Exclusive', value: 'Exclusive'},
+        {id: 'Failover', value: 'Failover'},
+        {id: 'Shared', value: 'Shared'},
+        {id: 'Key_Shared', value: 'Key_Shared'}
     ];
     initialPositions: DropdownOption[] = [
         {id: 'earliest', value: 'Earliest'},
@@ -66,10 +66,12 @@ export class ConsumerConfigComponent implements OnInit {
     ngOnInit(): void {
         this.formGroup = this.fb.group({
             topicName: ['persistent://gst/trading/topic-mapped-entities'],
-            subscriptionName: ['entity-manager-subscription'],
+            subscriptionName: ['entity-manager-subscription-abc123'],
             subscriptionType: ['Key_Shared'],
             schemaType: ['protobuf'],
-            initialPosition: ['earliest']
+            initialPosition: ['earliest'],
+            outerClassName: ['MegaProto'],
+            mainInnerClassName: ['EntityEnvelopeProto']
         });
     }
 
@@ -80,7 +82,9 @@ export class ConsumerConfigComponent implements OnInit {
             subscriptionName: this.formGroup.get('subscriptionName')?.value,
             subscriptionType: this.formGroup.get('subscriptionType')?.value,
             schemaType: this.formGroup.get('schemaType')?.value,
-            initialPosition: this.formGroup.get('initialPosition')?.value
+            initialPosition: this.formGroup.get('initialPosition')?.value,
+            outerClassName: this.formGroup.get('outerClassName')?.value,
+            mainInnerClassName: this.formGroup.get('mainInnerClassName')?.value
         }
 
         this.consumerService.postPulsarDynamicConsumer(this.currentFile!, consumerConfig).subscribe(

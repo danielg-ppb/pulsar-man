@@ -27,6 +27,7 @@ export class ListPulsarMessagesComponent {
     ngOnInit(): void {
         // Subscribe to incoming messages from the WebSocket
         this.messageSubscription = this.webSocketService.getMessages().subscribe((message) => {
+            console.log('Received message:', message);
             this.messages.push(message);
             this.scrollToBottom();
         });

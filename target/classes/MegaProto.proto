@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package protobuf;
+
+message PropertyProto {
+  string key = 1;
+  string value = 2;
+  string type = 3;
+}
+
+message RelationshipProto {
+  string name = 1;
+  IdProto target_id = 2;
+  string target_type = 3;
+}
+
+message EntityProto {
+  IdProto id = 1;
+  string type = 2;
+  string sport = 3;
+  repeated PropertyProto properties = 4;
+  repeated RelationshipProto relationships = 5;
+}
+
+message EntityEnvelopeProto {
+  MetadataProto metadata = 1;
+  EntityProto entity = 2;
+}
+
+message IdProto {
+  string externalId = 1;
+  string canonicalId = 2;
+  string source = 3;
+}
+
+message MetadataProto {
+  string correlationId = 1;
+  string provider = 2;
+  string externalId = 5;
+  map<string, string> latencyMetrics = 6;
+  bool heartbeat = 7;
+}
+
+

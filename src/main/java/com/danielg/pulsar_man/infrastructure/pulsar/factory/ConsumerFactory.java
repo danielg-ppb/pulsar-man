@@ -11,11 +11,18 @@ import org.springframework.stereotype.Service;
 public class ConsumerFactory {
     private PulsarConsumer pulsarConsumer;
 
-    public synchronized void initializePulsarConsumer(Consumer<?> consumer, PulsarConsumerRequest pulsarConsumerDto, String schemaFile) {
-        this.pulsarConsumer = new PulsarConsumer(consumer, pulsarConsumerDto.getTopicName(), pulsarConsumerDto.getSubscriptionName(), pulsarConsumerDto.getSchemaType(), pulsarConsumerDto.getInitialPosition(), schemaFile);
+    public synchronized void initializePulsarConsumer(Consumer<?> consumer,
+                                                      PulsarConsumerRequest pulsarConsumerDto,
+                                                      String schemaFile) {
+        this.pulsarConsumer = new PulsarConsumer(consumer,
+                pulsarConsumerDto.getTopicName(),
+                pulsarConsumerDto.getSubscriptionName(),
+                pulsarConsumerDto.getSubscriptionType(),
+                pulsarConsumerDto.getSchemaType(),
+                pulsarConsumerDto.getInitialPosition(), schemaFile);
     }
 
-    public synchronized void setPulsarConsumerToNull(){
+    public synchronized void setPulsarConsumerToNull() {
         this.pulsarConsumer = null;
     }
 }

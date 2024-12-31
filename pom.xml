@@ -23,13 +23,29 @@
         <protoc-jar-maven-plugin.version>3.11.4</protoc-jar-maven-plugin.version>
         <jackson-datatype-jsr310.version>2.18.2</jackson-datatype-jsr310.version>
     </properties>
-
-
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.apache.pulsar/pulsar-client-original -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-pulsar</artifactId>
-            <version>${spring.version}</version>
+            <groupId>org.apache.pulsar</groupId>
+            <artifactId>pulsar-client-original</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.pulsar/pulsar-common -->
+        <dependency>
+            <groupId>org.apache.pulsar</groupId>
+            <artifactId>pulsar-common</artifactId>
+            <version>4.0.1</version>
+        </dependency><!-- https://mvnrepository.com/artifact/org.apache.pulsar/pulsar-client-admin-api -->
+        <dependency>
+            <groupId>org.apache.pulsar</groupId>
+            <artifactId>pulsar-client-admin-api</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.pulsar</groupId>
+            <artifactId>pulsar-client-api</artifactId>
+            <version>4.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -61,7 +77,7 @@
         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
-            <version>${protoc-jar-maven-plugin.protocVersion}</version>
+            <version>3.25.5</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
@@ -73,7 +89,22 @@
             <artifactId>commons-text</artifactId>
             <version>1.13.0</version>
         </dependency>
-
+        <!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java-util -->
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java-util</artifactId>
+            <version>3.25.5</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+            <version>2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.os72</groupId>
+            <artifactId>protoc-jar</artifactId>
+            <version>3.11.4</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -81,7 +112,7 @@
             <plugin>
                 <groupId>com.github.os72</groupId>
                 <artifactId>protoc-jar-maven-plugin</artifactId>
-                <version>${protoc-jar-maven-plugin.version}</version>
+                <version>3.11.4</version>
                 <executions>
                     <execution>
                         <phase>generate-sources</phase>
@@ -89,9 +120,9 @@
                             <goal>run</goal>
                         </goals>
                         <configuration>
-                            <protocVersion>${protoc-jar-maven-plugin.protocVersion}</protocVersion>
+                            <protocVersion>3.21.12</protocVersion>
                             <inputDirectories>
-                                <include>src/main/java/com/proto</include>
+                                <include>src/main/java</include>
                             </inputDirectories>
                         </configuration>
                     </execution>

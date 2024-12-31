@@ -8,6 +8,7 @@ import {
 } from "./features/pulsar/configure-client-provider/configure-client-provider.component";
 import {ListPulsarMessagesComponent} from "./features/pulsar/list-pulsar-messages/list-pulsar-messages.component";
 import {ConsumerConfigComponent} from "./features/pulsar/consumer-config/consumer-config.component";
+import {PulsarMessagesComponent} from "./features/pulsar/pulsar-messages/pulsar-messages.component";
 
 export const routes: Routes = [
     {
@@ -30,6 +31,10 @@ export const routes: Routes = [
     {
         path: 'list-messages',
         component: ListPulsarMessagesComponent
+    },
+    {
+        path: 'pulsar-messages',
+        component: PulsarMessagesComponent
     },
     {
         path: 'configure-consumer',

@@ -10,7 +10,9 @@ import com.danielg.pulsar_man.infrastructure.pulsar.factory.ConsumerFactory;
 import com.danielg.pulsar_man.utils.PulsarSubcriptionUtils;
 import com.danielg.pulsar_man.utils.SchemaProvider;
 import jakarta.annotation.PreDestroy;
-import org.apache.pulsar.client.api.*;
+import org.apache.pulsar.client.api.Message;
+import org.apache.pulsar.client.api.PulsarClientException;
+import org.apache.pulsar.client.api.SubscriptionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -57,16 +59,16 @@ public class ConsumerService implements InitializeConsumerUseCase, ConsumeMessag
 
         String protoFileName = protoFile != null ? this.uploadFileUseCase.saveFile(protoFile).getFileName().toString() : null;
 
-        Schema<?> schema = SchemaProvider.getSchema(pulsarConsumerDto.getSchemaType());
-
         if (pulsarConsumerDto.getSchemaType().equals("protobuf") && protoFileName != null) {
             this.consumerFactory.initializePulsarConsumer(
                     this.clientFactory.getPulsarClientProvider().getPulsarClient()
                             .newConsumer()
                             .topic(pulsarConsumerDto.getTopicName())
                             .subscriptionName(pulsarConsumerDto.getSubscriptionName())
-                            .subscriptionType(SubscriptionType.Shared)
-                            .subscriptionInitialPosition(PulsarSubcriptionUtils.pulsarInitialPositionFromString(pulsarConsumerDto.getInitialPosition()))
+                            .subscriptionType(SubscriptionType.valueOf(pulsarConsumerDto.getSubscriptionType()))
+                            .subscriptionInitialPosition(
+                                    PulsarSubcriptionUtils
+                                            .pulsarInitialPositionFromString(pulsarConsumerDto.getInitialPosition()))
                             .subscribe(), pulsarConsumerDto, protoFileName);
         } else {
             this.initializeConsumer(pulsarConsumerDto);

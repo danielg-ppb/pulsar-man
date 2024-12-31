@@ -2,107 +2,75 @@ package com.danielg.pulsar_man.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.protobuf.DescriptorProtos;
-import com.google.protobuf.Descriptors;
-import com.google.protobuf.DynamicMessage;
+import com.google.protobuf.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
 import java.io.*;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ProtoUtils {
     static Logger logger = LoggerFactory.getLogger(ProtoUtils.class);
 
-    public static void compileProtoFile(Path protoFilePath) throws IOException, InterruptedException {
-        Path currentPath = Paths.get("").toAbsolutePath();
-        Path targetDir = currentPath.resolve("target/classes/com/danielg/pulsar_man");
+    public static void generateJavaFromProto(File protoFile) throws Exception {
+        System.out.println(protoFile);
 
-        Files.createDirectories(targetDir);
+        File outputDir = new File("target/generated-sources/proto");
+        if (!outputDir.exists()) {
+            if (!outputDir.mkdirs()) {
+                throw new IOException("Failed to create directory for generated sources: " + outputDir.getAbsolutePath());
+            }
+        }
+        System.out.println("Compiling");
 
-        // Set up ProcessBuilder to compile the proto file
         ProcessBuilder processBuilder = new ProcessBuilder(
-                "protoc",
-                "--proto_path=" + protoFilePath.getParent().toAbsolutePath(),
-                "--java_out=" + targetDir.toAbsolutePath(),
-                protoFilePath.toAbsolutePath().toString()
-        );
-
-        // Start process
-        Process process = processBuilder.start();
-
-        // Log error output if any
-        try (InputStream errorStream = process.getErrorStream()) {
-            errorStream.transferTo(System.err);
-        }
-
-        // Check exit value
-        if (process.waitFor() != 0) {
-            throw new IOException("Failed to compile proto file.");
-        }
-
-        logger.info("Proto file compiled successfully to " + targetDir);
-    }
-
-    public static Descriptors.Descriptor loadProtoDescriptor(String protoFileName) throws Exception {
-        Map<String, Descriptors.Descriptor> descriptors = new HashMap<>();
-        // Step 1: Extract .proto file from resources
-        File protoFile = extractProtoFile(protoFileName);
-
-        // Step 2: Compile the .proto file to a temporary .desc file
-        File descriptorFile = File.createTempFile("descriptor", ".desc");
-        compileProto(protoFile, descriptorFile);
-
-        // Step 3: Load the descriptor from the compiled .desc file
-        try (InputStream is = Files.newInputStream(descriptorFile.toPath())) {
-            DescriptorProtos.FileDescriptorSet descriptorSet = DescriptorProtos.FileDescriptorSet.parseFrom(is);
-            Descriptors.FileDescriptor fileDescriptor = Descriptors.FileDescriptor.buildFrom(
-                    descriptorSet.getFile(0), new Descriptors.FileDescriptor[]{}
-            );
-            Descriptors.Descriptor messageTypeDescriptor = fileDescriptor.getMessageTypes().get(0);
-            descriptors.put(protoFileName, messageTypeDescriptor);
-            return messageTypeDescriptor;
-        } finally {
-            // Clean up temporary files
-            protoFile.delete();
-            descriptorFile.delete();
-        }
-    }
-
-    private static File extractProtoFile(String protoFileName) throws IOException {
-        InputStream is = ProtoUtils.class.getClassLoader().getResourceAsStream(protoFileName);
-        if (is == null) {
-            throw new IllegalArgumentException("File not found: " + protoFileName);
-        }
-        File tempProtoFile = File.createTempFile("temp", ".proto");
-        try (FileOutputStream os = new FileOutputStream(tempProtoFile)) {
-            is.transferTo(os);
-        }
-        return tempProtoFile;
-    }
-
-    private static void compileProto(File protoFile, File descriptorFile) throws IOException, InterruptedException {
-        ProcessBuilder processBuilder = new ProcessBuilder(
-                "protoc",
-                "--descriptor_set_out=" + descriptorFile.getAbsolutePath(),
+                "/Users/guilherme.daniel/.local/bin/protoc", //TODO: Have a VAR here instead of this full path
                 "--proto_path=" + protoFile.getParent(),
+                "--java_out=" + outputDir.getAbsolutePath(),
                 protoFile.getAbsolutePath()
         );
         Process process = processBuilder.start();
         if (process.waitFor() != 0) {
             throw new IOException("Failed to compile proto file: " + new String(process.getErrorStream().readAllBytes()));
         }
+
+        String javaSourcePath = "target/generated-sources/proto/";
+        File javaFile = new File(javaSourcePath, "protobuf/MegaProto.java");
+
+        // Path to the output directory for compiled .class files
+        String classOutputPath = "target/compiled-classes/";
+        File classOutputDir = new File(classOutputPath);
+        if (!classOutputDir.exists()) {
+            classOutputDir.mkdirs();
+        }
+        // Compile the .java file
+        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+        if (compiler == null) {
+            throw new IllegalStateException("JavaCompiler is not available. Ensure you are using a JDK, not a JRE.");
+        }
+        int compileResult = compiler.run(null, null, null, "-d", classOutputPath, javaFile.getPath());
+        if (compileResult != 0) {
+            throw new RuntimeException("Compilation failed for: " + javaFile.getPath());
+        }
+        if (process.waitFor() != 0) {
+            throw new IOException("Failed to compile proto file: " + new String(process.getErrorStream().readAllBytes()));
+        }
     }
 
-    public static String convertDynamicMessageToJson(ObjectMapper objectMapper, DynamicMessage dynamicMessage) throws JsonProcessingException {
-        Map<String, Object> messageMap = new HashMap<>();
-        for (Map.Entry<Descriptors.FieldDescriptor, Object> field : dynamicMessage.getAllFields().entrySet()) {
-            messageMap.put(field.getKey().getName(), field.getValue());
-        }
-        return objectMapper.writeValueAsString(messageMap);
+    //TODO: Pulsar really needs to update their protobuf version. It only supports GeneratedMessageV3
+    public static Class<? extends GeneratedMessageV3> getClassFromProtoSchema(String schemaFile, String mainInnerClass)
+            throws IOException, ClassNotFoundException {
+        String targetPath = "target/compiled-classes/";
+        URL[] urls = {new File(targetPath).toURI().toURL()};
+        URLClassLoader classLoader = new URLClassLoader(urls, ProtoUtils.class.getClassLoader());
+
+        return (Class<? extends GeneratedMessageV3>) classLoader
+                .loadClass("protobuf." + schemaFile + "$" + mainInnerClass);
     }
 }

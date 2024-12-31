@@ -1,7 +1,6 @@
 package com.danielg.pulsar_man.infrastructure.pulsar.factory;
 
 import org.apache.pulsar.client.admin.PulsarAdmin;
-import org.apache.pulsar.client.api.AuthenticationFactory;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
