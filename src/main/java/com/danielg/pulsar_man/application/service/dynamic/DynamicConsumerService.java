@@ -4,9 +4,9 @@ import com.danielg.pulsar_man.application.port.input.dynamic.CreateDynamicConsum
 import com.danielg.pulsar_man.application.port.input.dynamic.GetDynamicConsumerUseCase;
 import com.danielg.pulsar_man.application.port.input.dynamic.InitializePulsarDynamicConsumerUseCase;
 import com.danielg.pulsar_man.infrastructure.adapter.input.rest.data.request.DynamicConsumerRequest;
+import com.danielg.pulsar_man.infrastructure.protoc.ProtocExecutor;
 import com.danielg.pulsar_man.infrastructure.pulsar.factory.ClientFactory;
 import com.danielg.pulsar_man.utils.FileUtils;
-import com.danielg.pulsar_man.utils.ProtoUtils;
 import com.danielg.pulsar_man.utils.PulsarSubcriptionUtils;
 import com.google.protobuf.GeneratedMessageV3;
 import org.apache.pulsar.client.api.Consumer;
@@ -24,12 +24,15 @@ public class DynamicConsumerService implements CreateDynamicConsumerUseCase, Get
         InitializePulsarDynamicConsumerUseCase {
     private final ClientFactory clientFactory;
     private final DynamicConsumerSingleton dynamicConsumerSingleton;
+    private final ProtocExecutor protocExecutor;
     private Consumer<?> consumer;
 
     public DynamicConsumerService(ClientFactory clientFactory,
-                                  DynamicConsumerSingleton dynamicConsumerSingleton) {
+                                  DynamicConsumerSingleton dynamicConsumerSingleton,
+                                  ProtocExecutor protocExecutor) {
         this.clientFactory = clientFactory;
         this.dynamicConsumerSingleton = dynamicConsumerSingleton;
+        this.protocExecutor = protocExecutor;
     }
 
     @Override
@@ -46,7 +49,8 @@ public class DynamicConsumerService implements CreateDynamicConsumerUseCase, Get
             dynamicConsumerSingleton.setMainInnerClassName(pulsarConsumerRequest.getMainInnerClassName());
 
             File savedFile = FileUtils.saveMultipartFile(protoFile);
-            ProtoUtils.generateJavaFromProto(savedFile);
+            //ProtoUtils.generateJavaFromProto(savedFile);
+            protocExecutor.generateJavaClassesFromProto(savedFile);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {

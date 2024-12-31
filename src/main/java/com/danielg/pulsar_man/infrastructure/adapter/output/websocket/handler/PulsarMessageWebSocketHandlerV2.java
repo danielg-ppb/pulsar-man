@@ -1,6 +1,7 @@
 package com.danielg.pulsar_man.infrastructure.adapter.output.websocket.handler;
 
 import com.danielg.pulsar_man.application.service.dynamic.DynamicConsumerService;
+import com.danielg.pulsar_man.infrastructure.protoc.ProtocExecutor;
 import com.danielg.pulsar_man.utils.DateUtils;
 import com.danielg.pulsar_man.utils.ProtoUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,21 +15,19 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 public class PulsarMessageWebSocketHandlerV2 extends TextWebSocketHandler {
     private DynamicConsumerService dynamicConsumerService;
+    private ProtocExecutor protocExecutor;
     private ObjectMapper objectMapper = new ObjectMapper();
     private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
 
-    public PulsarMessageWebSocketHandlerV2(DynamicConsumerService dynamicConsumerService) {
+    public PulsarMessageWebSocketHandlerV2(DynamicConsumerService dynamicConsumerService, ProtocExecutor protocExecutor) {
         this.dynamicConsumerService = dynamicConsumerService;
+        this.protocExecutor = protocExecutor;
     }
 
     @Override
@@ -52,9 +51,8 @@ public class PulsarMessageWebSocketHandlerV2 extends TextWebSocketHandler {
         System.out.println("Session" + session);
         String schemaFile = this.dynamicConsumerService.getDynamicConsumerSingleton().getSchemaFile();
 
-        Class<? extends GeneratedMessageV3> protobufClass =
-                ProtoUtils.getClassFromProtoSchema("MegaProto", "EntityEnvelopeProto");
-
+        Class<? extends GeneratedMessageV3> protobufClass = this.protocExecutor
+                .getClassFromProtoSchema("MegaProto", "EntityEnvelopeProto");
         try {
             Consumer<? extends GeneratedMessageV3> consumer =
                     (Consumer<? extends GeneratedMessageV3>) this.dynamicConsumerService.startConsumer(protobufClass);
