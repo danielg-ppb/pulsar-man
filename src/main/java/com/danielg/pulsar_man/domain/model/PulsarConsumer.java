@@ -2,10 +2,14 @@ package com.danielg.pulsar_man.domain.model;
 
 import com.danielg.pulsar_man.utils.PulsarSubcriptionUtils;
 import com.danielg.pulsar_man.utils.SchemaProvider;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 import org.apache.pulsar.client.api.*;
 
 @Getter
+@AllArgsConstructor
+@ToString
 public class PulsarConsumer {
     private final Consumer<?> consumer;
     private final String topicName;
@@ -30,18 +34,5 @@ public class PulsarConsumer {
         this.schemaType = schemaType;
         this.initialPosition = PulsarSubcriptionUtils.pulsarInitialPositionFromString(initialPosition);
         this.schemaFile = schemaFile;
-    }
-
-
-    public String toString() {
-        return "PulsarConsumer{" +
-                "consumer=" + consumer +
-                ", topicName='" + topicName + '\'' +
-                ", subscriptionName='" + subscriptionName + '\'' +
-                ", subscriptionType='" + subscriptionType + '\'' +
-                ", schemaType=" + schemaType +
-                ", initialPosition=" + initialPosition +
-                ", schemaFile='" + schemaFile + '\'' +
-                '}';
     }
 }

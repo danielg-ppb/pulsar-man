@@ -1,4 +1,4 @@
-package com.danielg.pulsar_man.application.service;
+package com.danielg.pulsar_man.application.service.client;
 
 import com.danielg.pulsar_man.application.port.input.subscription.BatchDeleteSubscriptionsUseCase;
 import com.danielg.pulsar_man.application.port.input.subscription.DeleteSubscriptionUseCase;

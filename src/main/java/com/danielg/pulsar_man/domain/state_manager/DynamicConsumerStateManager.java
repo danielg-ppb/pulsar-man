@@ -1,4 +1,4 @@
-package com.danielg.pulsar_man.application.service.dynamic;
+package com.danielg.pulsar_man.domain.state_manager;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 @ToString
-public class DynamicConsumerSingleton {
+public class DynamicConsumerStateManager {
     private String topicName;
     private String subscriptionName;
     private SubscriptionType subscriptionType;

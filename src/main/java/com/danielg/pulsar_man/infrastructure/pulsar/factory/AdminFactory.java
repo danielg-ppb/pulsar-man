@@ -12,16 +12,18 @@ public class AdminFactory {
 
     private PulsarAdmin pulsarAdmin;
 
-    public synchronized void initializePulsarAdmin(String serviceUrl) throws PulsarClientException {
+    public synchronized PulsarAdmin initializePulsarAdmin(String serviceUrl) throws PulsarClientException {
         if (this.pulsarAdmin != null) {
             this.pulsarAdmin.close();
         }
 
         System.out.println(token);
         this.pulsarAdmin = PulsarAdmin.builder()
-               // .authentication(AuthenticationFactory.token("file:///Users/guilherme.daniel/Repos/pulsar-man/token.jwt"))
+                // .authentication(AuthenticationFactory.token("file:///Users/guilherme.daniel/Repos/pulsar-man/token.jwt"))
                 .serviceHttpUrl(serviceUrl)
                 .build();
+
+        return this.pulsarAdmin;
     }
 
     public synchronized PulsarAdmin getPulsarAdmin() {

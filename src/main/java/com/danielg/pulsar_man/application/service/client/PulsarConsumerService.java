@@ -1,9 +1,7 @@
-package com.danielg.pulsar_man.application.service;
+package com.danielg.pulsar_man.application.service.client;
 
 import com.danielg.pulsar_man.application.port.input.consumer.ConsumeMessagesUseCase;
 import com.danielg.pulsar_man.application.port.input.consumer.InitializeConsumerUseCase;
-import com.danielg.pulsar_man.application.port.input.consumer.InitializeDynamicConsumer;
-import com.danielg.pulsar_man.application.port.input.file.UploadFileUseCase;
 import com.danielg.pulsar_man.infrastructure.adapter.input.rest.data.request.PulsarConsumerRequest;
 import com.danielg.pulsar_man.infrastructure.pulsar.factory.ClientFactory;
 import com.danielg.pulsar_man.infrastructure.pulsar.factory.ConsumerFactory;
@@ -16,24 +14,21 @@ import org.apache.pulsar.client.api.SubscriptionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class ConsumerService implements InitializeConsumerUseCase, ConsumeMessagesUseCase, InitializeDynamicConsumer {
-    private static final Logger logger = LoggerFactory.getLogger(ConsumerService.class);
+public class PulsarConsumerService implements InitializeConsumerUseCase, ConsumeMessagesUseCase {
+    private static final Logger logger = LoggerFactory.getLogger(PulsarConsumerService.class);
 
     private final ClientFactory clientFactory;
     private final ConsumerFactory consumerFactory;
-    private final UploadFileUseCase uploadFileUseCase;
 
-    public ConsumerService(ClientFactory clientFactory, ConsumerFactory consumerFactory, UploadFileUseCase uploadFileUseCase) {
+    public PulsarConsumerService(ClientFactory clientFactory, ConsumerFactory consumerFactory) {
         this.clientFactory = clientFactory;
         this.consumerFactory = consumerFactory;
-        this.uploadFileUseCase = uploadFileUseCase;
     }
 
     @Override
@@ -50,30 +45,6 @@ public class ConsumerService implements InitializeConsumerUseCase, ConsumeMessag
                         .subscriptionType(SubscriptionType.valueOf(pulsarConsumerDto.getSubscriptionType()))
                         .subscriptionInitialPosition(PulsarSubcriptionUtils.pulsarInitialPositionFromString(pulsarConsumerDto.getInitialPosition()))
                         .subscribe(), pulsarConsumerDto, null);
-    }
-
-    public void initializeDynamicConsumer(PulsarConsumerRequest pulsarConsumerDto, MultipartFile protoFile) throws Exception {
-        if (this.consumerFactory.getPulsarConsumer() != null) {
-            this.closeConsumer();
-        }
-
-        String protoFileName = protoFile != null ? this.uploadFileUseCase.saveFile(protoFile).getFileName().toString() : null;
-
-        if (pulsarConsumerDto.getSchemaType().equals("protobuf") && protoFileName != null) {
-            this.consumerFactory.initializePulsarConsumer(
-                    this.clientFactory.getPulsarClientProvider().getPulsarClient()
-                            .newConsumer()
-                            .topic(pulsarConsumerDto.getTopicName())
-                            .subscriptionName(pulsarConsumerDto.getSubscriptionName())
-                            .subscriptionType(SubscriptionType.valueOf(pulsarConsumerDto.getSubscriptionType()))
-                            .subscriptionInitialPosition(
-                                    PulsarSubcriptionUtils
-                                            .pulsarInitialPositionFromString(pulsarConsumerDto.getInitialPosition()))
-                            .subscribe(), pulsarConsumerDto, protoFileName);
-        } else {
-            this.initializeConsumer(pulsarConsumerDto);
-        }
-
     }
 
     @Override

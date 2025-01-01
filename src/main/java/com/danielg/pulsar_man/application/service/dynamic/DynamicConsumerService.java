@@ -3,16 +3,16 @@ package com.danielg.pulsar_man.application.service.dynamic;
 import com.danielg.pulsar_man.application.port.input.dynamic.CreateDynamicConsumerUseCase;
 import com.danielg.pulsar_man.application.port.input.dynamic.GetDynamicConsumerUseCase;
 import com.danielg.pulsar_man.application.port.input.dynamic.InitializePulsarDynamicConsumerUseCase;
+import com.danielg.pulsar_man.domain.model.PulsarDynamicConsumer;
 import com.danielg.pulsar_man.infrastructure.adapter.input.rest.data.request.DynamicConsumerRequest;
 import com.danielg.pulsar_man.infrastructure.protoc.ProtocExecutor;
 import com.danielg.pulsar_man.infrastructure.pulsar.factory.ClientFactory;
+import com.danielg.pulsar_man.infrastructure.pulsar.factory.DynamicConsumerFactory;
 import com.danielg.pulsar_man.utils.FileUtils;
-import com.danielg.pulsar_man.utils.PulsarSubcriptionUtils;
 import com.google.protobuf.GeneratedMessageV3;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.api.Schema;
-import org.apache.pulsar.client.api.SubscriptionType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,33 +23,33 @@ import java.io.IOException;
 public class DynamicConsumerService implements CreateDynamicConsumerUseCase, GetDynamicConsumerUseCase,
         InitializePulsarDynamicConsumerUseCase {
     private final ClientFactory clientFactory;
-    private final DynamicConsumerSingleton dynamicConsumerSingleton;
+    private final DynamicConsumerFactory dynamicConsumerFactory;
     private final ProtocExecutor protocExecutor;
     private Consumer<?> consumer;
+    private PulsarDynamicConsumer pulsarDynamicConsumer;
 
     public DynamicConsumerService(ClientFactory clientFactory,
-                                  DynamicConsumerSingleton dynamicConsumerSingleton,
+                                  DynamicConsumerFactory dynamicConsumerFactory,
                                   ProtocExecutor protocExecutor) {
         this.clientFactory = clientFactory;
-        this.dynamicConsumerSingleton = dynamicConsumerSingleton;
+        this.dynamicConsumerFactory = dynamicConsumerFactory;
         this.protocExecutor = protocExecutor;
     }
 
     @Override
     public void createDynamicConsumer(DynamicConsumerRequest pulsarConsumerRequest, MultipartFile protoFile) {
         try {
-            dynamicConsumerSingleton.setTopicName(pulsarConsumerRequest.getTopicName());
-            dynamicConsumerSingleton.setSubscriptionName(pulsarConsumerRequest.getSubscriptionName());
-            dynamicConsumerSingleton.setSubscriptionType(
-                    SubscriptionType.valueOf(pulsarConsumerRequest.getSubscriptionType()));
-            dynamicConsumerSingleton.setInitialPosition(PulsarSubcriptionUtils.pulsarInitialPositionFromString(
-                    pulsarConsumerRequest.getInitialPosition()));
-            dynamicConsumerSingleton.setSchemaFile(protoFile.getOriginalFilename());
-            dynamicConsumerSingleton.setOuterClassName(pulsarConsumerRequest.getOuterClassName());
-            dynamicConsumerSingleton.setMainInnerClassName(pulsarConsumerRequest.getMainInnerClassName());
+            this.pulsarDynamicConsumer = this.dynamicConsumerFactory.createDynamicConsumer(
+                    pulsarConsumerRequest.getTopicName(),
+                    pulsarConsumerRequest.getSubscriptionName(),
+                    pulsarConsumerRequest.getSubscriptionType(),
+                    pulsarConsumerRequest.getInitialPosition(),
+                    protoFile.getOriginalFilename(),
+                    pulsarConsumerRequest.getOuterClassName(),
+                    pulsarConsumerRequest.getMainInnerClassName()
+            );
 
             File savedFile = FileUtils.saveMultipartFile(protoFile);
-            //ProtoUtils.generateJavaFromProto(savedFile);
             protocExecutor.generateJavaClassesFromProto(savedFile);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -59,8 +59,8 @@ public class DynamicConsumerService implements CreateDynamicConsumerUseCase, Get
     }
 
     @Override
-    public DynamicConsumerSingleton getDynamicConsumerSingleton() {
-        return dynamicConsumerSingleton;
+    public PulsarDynamicConsumer getDynamicConsumerSingleton() {
+        return this.pulsarDynamicConsumer;
     }
 
     public Consumer<?> startConsumer(Class<? extends GeneratedMessageV3> schemaClass) throws PulsarClientException {
@@ -71,10 +71,10 @@ public class DynamicConsumerService implements CreateDynamicConsumerUseCase, Get
         Schema<?> schema = schemaClass != null ? Schema.PROTOBUF(schemaClass) : Schema.AUTO_CONSUME();
         this.consumer = this.clientFactory.getPulsarClientProvider().getPulsarClient()
                 .newConsumer(schema)
-                .topic(dynamicConsumerSingleton.getTopicName())
-                .subscriptionName(dynamicConsumerSingleton.getSubscriptionName())
-                .subscriptionType(dynamicConsumerSingleton.getSubscriptionType())
-                .subscriptionInitialPosition(dynamicConsumerSingleton.getInitialPosition())
+                .topic(pulsarDynamicConsumer.getTopicName())
+                .subscriptionName(pulsarDynamicConsumer.getSubscriptionName())
+                .subscriptionType(pulsarDynamicConsumer.getSubscriptionType())
+                .subscriptionInitialPosition(pulsarDynamicConsumer.getInitialPosition())
                 .subscribe();
 
         return this.consumer;
