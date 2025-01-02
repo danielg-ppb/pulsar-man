@@ -7,8 +7,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DynamicConsumerFactory {
-    private PulsarDynamicConsumer pulsarDynamicConsumer;
-
     public PulsarDynamicConsumer createDynamicConsumer(
             String topicName,
             String subscriptionName,
