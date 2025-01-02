@@ -4,11 +4,13 @@ import com.danielg.pulsar_man.application.port.input.dynamic.CreateDynamicConsum
 import com.danielg.pulsar_man.application.port.input.dynamic.GetDynamicConsumerUseCase;
 import com.danielg.pulsar_man.application.port.input.dynamic.InitializePulsarDynamicConsumerUseCase;
 import com.danielg.pulsar_man.domain.model.PulsarDynamicConsumer;
+import com.danielg.pulsar_man.domain.repository.DynamicConsumerRepository;
 import com.danielg.pulsar_man.infrastructure.adapter.input.rest.data.request.DynamicConsumerRequest;
 import com.danielg.pulsar_man.infrastructure.protoc.ProtocExecutor;
 import com.danielg.pulsar_man.infrastructure.pulsar.factory.ClientFactory;
 import com.danielg.pulsar_man.infrastructure.pulsar.factory.DynamicConsumerFactory;
 import com.danielg.pulsar_man.utils.FileUtils;
+import com.danielg.pulsar_man.utils.PulsarKeyUtils;
 import com.google.protobuf.GeneratedMessageV3;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.PulsarClientException;
@@ -20,26 +22,28 @@ import java.io.File;
 import java.io.IOException;
 
 @Service
-public class DynamicConsumerService implements CreateDynamicConsumerUseCase, GetDynamicConsumerUseCase,
+public class DynamicConsumerService implements CreateDynamicConsumerUseCase,
         InitializePulsarDynamicConsumerUseCase {
     private final ClientFactory clientFactory;
     private final DynamicConsumerFactory dynamicConsumerFactory;
+    private final DynamicConsumerRepository dynamicConsumerRepository;
     private final ProtocExecutor protocExecutor;
-    private Consumer<?> consumer;
     private PulsarDynamicConsumer pulsarDynamicConsumer;
 
     public DynamicConsumerService(ClientFactory clientFactory,
                                   DynamicConsumerFactory dynamicConsumerFactory,
+                                  DynamicConsumerRepository dynamicConsumerRepository,
                                   ProtocExecutor protocExecutor) {
         this.clientFactory = clientFactory;
         this.dynamicConsumerFactory = dynamicConsumerFactory;
+        this.dynamicConsumerRepository = dynamicConsumerRepository;
         this.protocExecutor = protocExecutor;
     }
 
     @Override
     public void createDynamicConsumer(DynamicConsumerRequest pulsarConsumerRequest, MultipartFile protoFile) {
         try {
-            this.pulsarDynamicConsumer = this.dynamicConsumerFactory.createDynamicConsumer(
+            PulsarDynamicConsumer pulsarDynamicConsumer = this.dynamicConsumerFactory.createDynamicConsumer(
                     pulsarConsumerRequest.getTopicName(),
                     pulsarConsumerRequest.getSubscriptionName(),
                     pulsarConsumerRequest.getSubscriptionType(),
@@ -48,6 +52,13 @@ public class DynamicConsumerService implements CreateDynamicConsumerUseCase, Get
                     pulsarConsumerRequest.getOuterClassName(),
                     pulsarConsumerRequest.getMainInnerClassName()
             );
+
+            this.dynamicConsumerRepository
+                    .saveState(PulsarKeyUtils
+                                    .generateKey(
+                                            pulsarConsumerRequest.getTopicName(),
+                                            pulsarConsumerRequest.getSubscriptionName()),
+                            pulsarDynamicConsumer);
 
             File savedFile = FileUtils.saveMultipartFile(protoFile);
             protocExecutor.generateJavaClassesFromProto(savedFile);
@@ -58,29 +69,19 @@ public class DynamicConsumerService implements CreateDynamicConsumerUseCase, Get
         }
     }
 
-    @Override
-    public PulsarDynamicConsumer getDynamicConsumerSingleton() {
-        return this.pulsarDynamicConsumer;
-    }
+    public Consumer<?> startConsumer(
+            String dynamicStateKey,
+            Class<? extends GeneratedMessageV3> schemaClass) throws PulsarClientException {
 
-    public Consumer<?> startConsumer(Class<? extends GeneratedMessageV3> schemaClass) throws PulsarClientException {
-        if (this.consumer != null && this.consumer.isConnected()) {
-            this.consumer.close();
-        }
+        PulsarDynamicConsumer pulsarDynamicConsumer = this.dynamicConsumerRepository.getState(dynamicStateKey);
 
         Schema<?> schema = schemaClass != null ? Schema.PROTOBUF(schemaClass) : Schema.AUTO_CONSUME();
-        this.consumer = this.clientFactory.getPulsarClientProvider().getPulsarClient()
+        return this.clientFactory.getPulsarClientProvider().getPulsarClient()
                 .newConsumer(schema)
                 .topic(pulsarDynamicConsumer.getTopicName())
                 .subscriptionName(pulsarDynamicConsumer.getSubscriptionName())
                 .subscriptionType(pulsarDynamicConsumer.getSubscriptionType())
                 .subscriptionInitialPosition(pulsarDynamicConsumer.getInitialPosition())
                 .subscribe();
-
-        return this.consumer;
-    }
-
-    public void closeConsumer() throws PulsarClientException {
-        this.consumer.close();
     }
 }

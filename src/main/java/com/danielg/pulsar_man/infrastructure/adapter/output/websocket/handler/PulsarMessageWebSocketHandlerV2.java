@@ -1,8 +1,11 @@
 package com.danielg.pulsar_man.infrastructure.adapter.output.websocket.handler;
 
 import com.danielg.pulsar_man.application.service.dynamic.DynamicConsumerService;
+import com.danielg.pulsar_man.domain.model.PulsarDynamicConsumer;
+import com.danielg.pulsar_man.domain.repository.DynamicConsumerRepository;
 import com.danielg.pulsar_man.infrastructure.protoc.ProtocExecutor;
 import com.danielg.pulsar_man.utils.DateUtils;
+import com.danielg.pulsar_man.utils.PulsarKeyUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.GeneratedMessageV3;
 import com.google.protobuf.util.JsonFormat;
@@ -21,12 +24,15 @@ import java.util.concurrent.TimeUnit;
 public class PulsarMessageWebSocketHandlerV2 extends TextWebSocketHandler {
     private DynamicConsumerService dynamicConsumerService;
     private ProtocExecutor protocExecutor;
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private DynamicConsumerRepository dynamicConsumerRepository;
     private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
 
-    public PulsarMessageWebSocketHandlerV2(DynamicConsumerService dynamicConsumerService, ProtocExecutor protocExecutor) {
+    public PulsarMessageWebSocketHandlerV2(DynamicConsumerService dynamicConsumerService,
+                                           ProtocExecutor protocExecutor,
+                                           DynamicConsumerRepository dynamicConsumerRepository) {
         this.dynamicConsumerService = dynamicConsumerService;
         this.protocExecutor = protocExecutor;
+        this.dynamicConsumerRepository = dynamicConsumerRepository;
     }
 
     @Override
@@ -48,15 +54,20 @@ public class PulsarMessageWebSocketHandlerV2 extends TextWebSocketHandler {
 
     private void consumeMessages(WebSocketSession session) throws IOException, ClassNotFoundException {
         System.out.println("Session" + session);
-        String outerClassName = this.dynamicConsumerService.getDynamicConsumerSingleton().getOuterClassName();
-        String mainInnerClassName = this.dynamicConsumerService.getDynamicConsumerSingleton().getMainInnerClassName();
-        System.out.println("Dynamic stuff" + this.dynamicConsumerService.getDynamicConsumerSingleton());
+        PulsarDynamicConsumer pulsarDynamicConsumer = this.dynamicConsumerRepository.getLatestState();
+
+        String pulsarGenKey = PulsarKeyUtils.generateKey(pulsarDynamicConsumer.getTopicName(),
+                pulsarDynamicConsumer.getSubscriptionName());
+
+        String outerClassName = pulsarDynamicConsumer.getOuterClassName();
+        String mainInnerClassName = pulsarDynamicConsumer.getMainInnerClassName();
 
         Class<? extends GeneratedMessageV3> protobufClass = this.protocExecutor
                 .getClassFromProtoSchema(outerClassName, mainInnerClassName);
         try {
             Consumer<? extends GeneratedMessageV3> consumer =
-                    (Consumer<? extends GeneratedMessageV3>) this.dynamicConsumerService.startConsumer(protobufClass);
+                    (Consumer<? extends GeneratedMessageV3>)
+                            this.dynamicConsumerService.startConsumer(pulsarGenKey, protobufClass);
             while (session.isOpen() && sessions.containsKey(session.getId())) {
                 Message<? extends GeneratedMessageV3> consumedMessage = consumer.receive(100, TimeUnit.MILLISECONDS);
                 if (consumedMessage != null) {
@@ -69,7 +80,9 @@ public class PulsarMessageWebSocketHandlerV2 extends TextWebSocketHandler {
         }
     }
 
-    private void consumeDynamicMessages(WebSocketSession session, Consumer<?> consumer, Message<? extends GeneratedMessageV3> msg) {
+    private void consumeDynamicMessages(WebSocketSession session,
+                                        Consumer<?> consumer,
+                                        Message<? extends GeneratedMessageV3> msg) {
         try {
             if (session.isOpen()) {
                 String protoJson = JsonFormat.printer().includingDefaultValueFields().print(msg.getValue());
