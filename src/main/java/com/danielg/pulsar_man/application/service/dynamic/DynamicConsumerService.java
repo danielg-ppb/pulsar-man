@@ -1,7 +1,6 @@
 package com.danielg.pulsar_man.application.service.dynamic;
 
 import com.danielg.pulsar_man.application.port.input.dynamic.CreateDynamicConsumerUseCase;
-import com.danielg.pulsar_man.application.port.input.dynamic.GetDynamicConsumerUseCase;
 import com.danielg.pulsar_man.application.port.input.dynamic.InitializePulsarDynamicConsumerUseCase;
 import com.danielg.pulsar_man.domain.model.PulsarDynamicConsumer;
 import com.danielg.pulsar_man.domain.repository.DynamicConsumerRepository;
@@ -43,15 +42,8 @@ public class DynamicConsumerService implements CreateDynamicConsumerUseCase,
     @Override
     public void createDynamicConsumer(DynamicConsumerRequest pulsarConsumerRequest, MultipartFile protoFile) {
         try {
-            PulsarDynamicConsumer pulsarDynamicConsumer = this.dynamicConsumerFactory.createDynamicConsumer(
-                    pulsarConsumerRequest.getTopicName(),
-                    pulsarConsumerRequest.getSubscriptionName(),
-                    pulsarConsumerRequest.getSubscriptionType(),
-                    pulsarConsumerRequest.getInitialPosition(),
-                    protoFile.getOriginalFilename(),
-                    pulsarConsumerRequest.getOuterClassName(),
-                    pulsarConsumerRequest.getMainInnerClassName()
-            );
+            PulsarDynamicConsumer pulsarDynamicConsumer = createPulsarDynamicConsumerObject(pulsarConsumerRequest,
+                    protoFile.getOriginalFilename());
 
             this.dynamicConsumerRepository
                     .saveState(PulsarKeyUtils
@@ -67,6 +59,39 @@ public class DynamicConsumerService implements CreateDynamicConsumerUseCase,
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void createDynamicConsumer(DynamicConsumerRequest pulsarConsumerRequest, File protoFile) {
+        try {
+            PulsarDynamicConsumer pulsarDynamicConsumer = createPulsarDynamicConsumerObject(pulsarConsumerRequest,
+                    protoFile.getName());
+
+            this.dynamicConsumerRepository
+                    .saveState(PulsarKeyUtils
+                                    .generateKey(
+                                            pulsarConsumerRequest.getTopicName(),
+                                            pulsarConsumerRequest.getSubscriptionName()),
+                            pulsarDynamicConsumer);
+
+            protocExecutor.generateJavaClassesFromProto(protoFile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private PulsarDynamicConsumer createPulsarDynamicConsumerObject(DynamicConsumerRequest pulsarConsumerRequest, String protoFile) {
+        return this.dynamicConsumerFactory.createDynamicConsumer(
+                pulsarConsumerRequest.getTopicName(),
+                pulsarConsumerRequest.getSubscriptionName(),
+                pulsarConsumerRequest.getSubscriptionType(),
+                pulsarConsumerRequest.getInitialPosition(),
+                protoFile,
+                pulsarConsumerRequest.getOuterClassName(),
+                pulsarConsumerRequest.getMainInnerClassName()
+        );
     }
 
     public Consumer<?> startConsumer(

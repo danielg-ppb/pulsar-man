@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AdminFactory {
-    @Value("${pulsar.token}")
+    @Value("${static.pulsar.token}")
     private String token;
 
     private PulsarAdmin pulsarAdmin;

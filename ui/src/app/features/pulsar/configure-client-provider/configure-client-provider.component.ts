@@ -46,4 +46,8 @@ export class ConfigureClientProviderComponent {
         // navigate to list-messages component
         this.router.navigate(['/configure-consumer']);
     }
+
+    routeToSocket() {
+        this.router.navigate(['/list-messages']);
+    }
 }
