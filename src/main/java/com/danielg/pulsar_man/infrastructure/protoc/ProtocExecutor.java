@@ -14,6 +14,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class ProtocExecutor {
@@ -55,25 +57,30 @@ public class ProtocExecutor {
         }
     }
 
-    public void generateJavaClassesFromProto(File protoFile) throws Exception {
-        Process process = createProtocProcess(protoFile);
+    public void generateJavaClassesFromProto(List<File> protoFiles) throws Exception {
+        Process process = createProtocProcess(protoFiles);
         // Compile the .java file
-        compileProto(protoFile, process);
+        compileProto(protoFiles, process);
     }
 
-    private Process createProtocProcess(File protoFile) throws IOException, InterruptedException {
+    private Process createProtocProcess(List<File> protoFiles) throws IOException, InterruptedException {
         File outputDir = new File("target/generated-sources/proto");
         if (!outputDir.exists()) {
             if (!outputDir.mkdirs()) {
                 throw new IOException("Failed to create directory for generated sources: " + outputDir.getAbsolutePath());
             }
         }
-        ProcessBuilder processBuilder = new ProcessBuilder(
-                this.protocExecutable.getAbsolutePath(),
-                "--proto_path=" + protoFile.getParent(),
-                "--java_out=" + outputDir.getAbsolutePath(),
-                protoFile.getAbsolutePath()
-        );
+
+        List<String> command = new ArrayList<>();
+        command.add(this.protocExecutable.getAbsolutePath());
+        command.add("--proto_path=" + protoFiles.getFirst().getParent());
+        command.add("--java_out=" + outputDir.getAbsolutePath());
+
+        for (File protoFile : protoFiles) {
+            command.add(protoFile.getAbsolutePath());
+        }
+
+        ProcessBuilder processBuilder = new ProcessBuilder(command);
         Process process = processBuilder.start();
         if (process.waitFor() != 0) {
             throw new IOException("Failed to compile proto file: " + new String(process.getErrorStream().readAllBytes()));
@@ -81,29 +88,31 @@ public class ProtocExecutor {
         return process;
     }
 
-    private static void compileProto(File protoFile, Process process) throws InterruptedException, IOException {
+    private static void compileProto(List<File> protoFiles, Process process) throws InterruptedException, IOException {
         System.out.println("Compiling");
         String javaSourcePath = "target/generated-sources/proto/";
 
-        File javaFile = new File(javaSourcePath, "protobuf/" +
-                FilenameUtils.removeExtension(protoFile.getName()) + ".java");
+        for (File protoFile : protoFiles) {
+            File javaFile = new File(javaSourcePath, "protobuf/" +
+                    FilenameUtils.removeExtension(protoFile.getName()) + ".java");
 
-        // Path to the output directory for compiled .class files
-        String classOutputPath = "target/compiled-classes/";
-        File classOutputDir = new File(classOutputPath);
-        if (!classOutputDir.exists()) {
-            classOutputDir.mkdirs();
-        }
-        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        if (compiler == null) {
-            throw new IllegalStateException("JavaCompiler is not available.");
-        }
-        int compileResult = compiler.run(null, null, null, "-d", classOutputPath, javaFile.getPath());
-        if (compileResult != 0) {
-            throw new RuntimeException("Compilation failed for: " + javaFile.getPath());
-        }
-        if (process.waitFor() != 0) {
-            throw new IOException("Failed to compile proto file: " + new String(process.getErrorStream().readAllBytes()));
+            // Path to the output directory for compiled .class files
+            String classOutputPath = "target/compiled-classes/";
+            File classOutputDir = new File(classOutputPath);
+            if (!classOutputDir.exists()) {
+                classOutputDir.mkdirs();
+            }
+            JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+            if (compiler == null) {
+                throw new IllegalStateException("JavaCompiler is not available.");
+            }
+            int compileResult = compiler.run(null, null, null, "-d", classOutputPath, javaFile.getPath());
+            if (compileResult != 0) {
+                throw new RuntimeException("Compilation failed for: " + javaFile.getPath());
+            }
+            if (process.waitFor() != 0) {
+                throw new IOException("Failed to compile proto file: " + new String(process.getErrorStream().readAllBytes()));
+            }
         }
     }
 

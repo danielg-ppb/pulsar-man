@@ -74,6 +74,7 @@ public class PulsarMessageWebSocketHandlerV2 extends TextWebSocketHandler {
                     consumeDynamicMessages(session, consumer, consumedMessage);
                 }
             }
+            consumer.close();
             System.out.println("Session closed");
         } catch (Exception e) {
             throw new RuntimeException(e);

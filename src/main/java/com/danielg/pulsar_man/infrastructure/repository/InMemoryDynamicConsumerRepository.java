@@ -23,6 +23,7 @@ public class InMemoryDynamicConsumerRepository implements DynamicConsumerReposit
         return stateMap.getOrDefault(key, null);
     }
 
+    @Override
     public PulsarDynamicConsumer getLatestState() {
         return stateMap.getOrDefault(latestKey, null);
     }

@@ -22,30 +22,31 @@
         <protoc-jar-maven-plugin.protocVersion>3.21.12</protoc-jar-maven-plugin.protocVersion>
         <protoc-jar-maven-plugin.version>3.11.4</protoc-jar-maven-plugin.version>
         <jackson-datatype-jsr310.version>2.18.2</jackson-datatype-jsr310.version>
+        <commons-io.version>2.18.0</commons-io.version>
+        <google-protobuf-java-util.version>3.25.5</google-protobuf-java-util.version>
+        <commons-text.version>1.13.0</commons-text.version>
+        <pulsar-lib.version>4.0.1</pulsar-lib.version>
     </properties>
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/org.apache.pulsar/pulsar-client-original -->
         <dependency>
             <groupId>org.apache.pulsar</groupId>
             <artifactId>pulsar-client-original</artifactId>
-            <version>4.0.1</version>
+            <version>${pulsar-lib.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.pulsar/pulsar-common -->
         <dependency>
             <groupId>org.apache.pulsar</groupId>
             <artifactId>pulsar-common</artifactId>
-            <version>4.0.1</version>
-        </dependency><!-- https://mvnrepository.com/artifact/org.apache.pulsar/pulsar-client-admin-api -->
+            <version>${pulsar-lib.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.pulsar</groupId>
             <artifactId>pulsar-client-admin-api</artifactId>
-            <version>4.0.1</version>
+            <version>${pulsar-lib.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.apache.pulsar</groupId>
             <artifactId>pulsar-client-api</artifactId>
-            <version>4.0.1</version>
+            <version>${pulsar-lib.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -77,7 +78,7 @@
         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
-            <version>3.25.5</version>
+            <version>${google-protobuf-java-util.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
@@ -87,31 +88,23 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
-            <version>1.13.0</version>
+            <version>${commons-text.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java-util -->
         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java-util</artifactId>
-            <version>3.25.5</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>javax.ws.rs-api</artifactId>
-            <version>2.1</version>
+            <version>${google-protobuf-java-util.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.os72</groupId>
             <artifactId>protoc-jar</artifactId>
-            <version>3.11.4</version>
+            <version>${protoc-jar-maven-plugin.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.18.0</version>
+            <version>${commons-io.version}</version>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -119,7 +112,7 @@
             <plugin>
                 <groupId>com.github.os72</groupId>
                 <artifactId>protoc-jar-maven-plugin</artifactId>
-                <version>3.11.4</version>
+                <version>${protoc-jar-maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <phase>generate-sources</phase>
@@ -127,7 +120,7 @@
                             <goal>run</goal>
                         </goals>
                         <configuration>
-                            <protocVersion>3.21.12</protocVersion>
+                            <protocVersion>${protoc-jar-maven-plugin.protocVersion}</protocVersion>
                             <inputDirectories>
                                 <include>src/main/java</include>
                             </inputDirectories>

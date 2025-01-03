@@ -1,7 +1,6 @@
 package com.danielg.pulsar_man.application.service.staticConfigurer;
 
 import com.danielg.pulsar_man.application.service.dynamic.DynamicConsumerService;
-import com.danielg.pulsar_man.domain.model.PulsarDynamicConsumer;
 import com.danielg.pulsar_man.infrastructure.adapter.input.rest.data.request.DynamicConsumerRequest;
 import com.danielg.pulsar_man.infrastructure.adapter.input.rest.data.request.PulsarServiceUrlRequest;
 import com.danielg.pulsar_man.infrastructure.pulsar.factory.ClientFactory;
@@ -10,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 
 @Service
 public class PulsarStaticConfigurerService {
@@ -36,6 +36,9 @@ public class PulsarStaticConfigurerService {
 
     @Value("${static.pulsar.initialPosition}")
     private String initialPosition;
+
+    @Value("${static.schema.protoFile}")
+    private String protoFile;
 
     @Value("${static.schema.outerClassName}")
     private String outerClassName;
@@ -64,13 +67,13 @@ public class PulsarStaticConfigurerService {
                 .mainInnerClassName(mainInnerClassName)
                 .build();
         File loadedFile = loadFile();
-        this.dynamicConsumerService.createDynamicConsumer(dynamicConsumerRequest, loadedFile);
+        this.dynamicConsumerService.createDynamicConsumer(dynamicConsumerRequest, loadedFile, List.of(loadedFile));
 
     }
 
     private File loadFile() {
         ClassLoader classLoader = PulsarStaticConfigurerService.class.getClassLoader();
-        URL resourceUrl = classLoader.getResource("uploads/MegaProto.proto");
+        URL resourceUrl = classLoader.getResource("uploads/" + protoFile);
 
         if (resourceUrl != null) {
             return new File(resourceUrl.getFile());

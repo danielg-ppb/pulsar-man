@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 @Service
 public class DynamicConsumerService implements CreateDynamicConsumerUseCase,
@@ -53,7 +54,7 @@ public class DynamicConsumerService implements CreateDynamicConsumerUseCase,
                             pulsarDynamicConsumer);
 
             File savedFile = FileUtils.saveMultipartFile(protoFile);
-            protocExecutor.generateJavaClassesFromProto(savedFile);
+            protocExecutor.generateJavaClassesFromProto(List.of(savedFile));
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
@@ -62,10 +63,12 @@ public class DynamicConsumerService implements CreateDynamicConsumerUseCase,
     }
 
     @Override
-    public void createDynamicConsumer(DynamicConsumerRequest pulsarConsumerRequest, File protoFile) {
+    public void createDynamicConsumer(DynamicConsumerRequest pulsarConsumerRequest,
+                                      File consumerSchemaFile, List<File> protoFiles) {
+        //TODO: add logic to generate java classes from multiple proto files
         try {
             PulsarDynamicConsumer pulsarDynamicConsumer = createPulsarDynamicConsumerObject(pulsarConsumerRequest,
-                    protoFile.getName());
+                    consumerSchemaFile.getName());
 
             this.dynamicConsumerRepository
                     .saveState(PulsarKeyUtils
@@ -74,7 +77,7 @@ public class DynamicConsumerService implements CreateDynamicConsumerUseCase,
                                             pulsarConsumerRequest.getSubscriptionName()),
                             pulsarDynamicConsumer);
 
-            protocExecutor.generateJavaClassesFromProto(protoFile);
+            protocExecutor.generateJavaClassesFromProto(List.of(consumerSchemaFile));
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
