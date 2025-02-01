@@ -20,7 +20,6 @@ interface DropdownOption {
 
 @Component({
     selector: 'app-consumer-config',
-    standalone: true,
     imports: [
         ReactiveFormsModule,
         InputTextModule,
@@ -34,7 +33,6 @@ interface DropdownOption {
     templateUrl: './consumer-config.component.html',
     styleUrl: './consumer-config.component.scss',
     providers: [MessageService]
-
 })
 export class ConsumerConfigComponent implements OnInit {
     formGroup!: FormGroup;

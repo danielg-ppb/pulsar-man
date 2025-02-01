@@ -6,7 +6,6 @@ import {NgForOf, NgIf} from "@angular/common";
 
 @Component({
     selector: 'app-pulsar-messages',
-    standalone: true,
     imports: [
         NgIf,
         NgForOf

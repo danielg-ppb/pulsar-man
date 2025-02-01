@@ -6,13 +6,12 @@ import {WebsocketService} from "../../../core/services/websocket-service";
 
 @Component({
     selector: 'app-list-pulsar-messages',
-    standalone: true,
     imports: [
-        DatePipe,
         NgForOf,
         JsonPipe
     ],
     templateUrl: './list-pulsar-messages.component.html',
+    standalone: true,
     styleUrl: './list-pulsar-messages.component.scss'
 })
 export class ListPulsarMessagesComponent {

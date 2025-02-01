@@ -6,18 +6,20 @@ import {CommonModule} from "@angular/common";
 import {Button} from "primeng/button";
 import {PulsarProviderService} from "../../../core/services/pulsar-provider.service";
 import {Router} from "@angular/router";
+import {FormsModule} from "@angular/forms";
 
 @Component({
     selector: 'app-configure-client-provider',
-    standalone: true,
     imports: [
         FloatLabelModule,
         InputTextModule,
         PaginatorModule,
         CommonModule,
-        Button
+        Button,
+        FormsModule
     ],
     templateUrl: './configure-client-provider.component.html',
+    standalone: true,
     styleUrl: './configure-client-provider.component.scss'
 })
 export class ConfigureClientProviderComponent {
