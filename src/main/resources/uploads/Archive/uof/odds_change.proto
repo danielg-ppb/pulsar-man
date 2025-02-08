@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package com.contract.uof;
+option java_outer_classname = "OddsChangeUOF";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "sport_event_status.proto";
+import "odds.proto";
+
+message OddsChangeProto {
+  google.protobuf.StringValue event_id = 1;
+  google.protobuf.StringValue product = 2;
+  google.protobuf.Timestamp timestamp = 3;
+  SportEventStatusProto status = 4;
+  OddsProto odds = 5;
+}

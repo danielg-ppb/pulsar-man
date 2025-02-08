@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package com.contract.uof;
+option java_outer_classname = "CurrentSeasonInfoUOF";
+
+import "competitor.proto";
+import "group.proto";
+import "round.proto";
+import "season_coverage.proto";
+import "match.proto";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+message CurrentSeasonInfoProto {
+  google.protobuf.StringValue id = 1;
+  google.protobuf.StringValue name = 2;
+  google.protobuf.StringValue year = 3;
+  google.protobuf.Timestamp startDate = 4;
+  google.protobuf.Timestamp endDate = 5;
+  SeasonCoverageProto coverage = 6;
+  repeated GroupProto groups = 7;
+  RoundProto currentRound = 8;
+  repeated CompetitorProto competitors = 9;
+  repeated MatchProto schedule = 10;
+}

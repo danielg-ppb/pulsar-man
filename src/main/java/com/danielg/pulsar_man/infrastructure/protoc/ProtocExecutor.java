@@ -6,16 +6,16 @@ import org.springframework.stereotype.Component;
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class ProtocExecutor {
@@ -63,6 +63,12 @@ public class ProtocExecutor {
         compileProto(protoFiles, process);
     }
 
+    public void generateJavaClassesFromZippedProtoFolder(Path unzipedProtoFile) throws Exception {
+        Process process = createProtocProcess(unzipedProtoFile);
+        // Compile the .java file
+        //compileProto(unzipedProtoFile, process);
+    }
+
     private Process createProtocProcess(List<File> protoFiles) throws IOException, InterruptedException {
         File outputDir = new File("target/generated-sources/proto");
         if (!outputDir.exists()) {
@@ -87,6 +93,65 @@ public class ProtocExecutor {
         }
         return process;
     }
+
+    private Process createProtocProcess(Path unzipedProtoFile) throws IOException, InterruptedException {
+        File outputDir = new File("target/generated-sources/proto");
+        if (!outputDir.exists() && !outputDir.mkdirs()) {
+            throw new IOException("Failed to create directory for generated sources: " + outputDir.getAbsolutePath());
+        }
+
+        System.out.println(unzipedProtoFile);
+
+        // Collect all .proto files recursively from the unzipedProtoFile directory
+        List<String> protoFiles = new ArrayList<>();
+        Set<Path> protoDirectories = new HashSet<>(); // Store all unique parent directories
+
+        Files.walk(unzipedProtoFile)
+                .filter(path -> path.toString().endsWith(".proto"))
+                .forEach(path -> {
+                    String relativePath = unzipedProtoFile.relativize(path).toString();
+                    protoFiles.add(relativePath);
+                    protoDirectories.add(path.getParent()); // Collect parent directories
+
+                });
+
+        if (protoFiles.isEmpty()) {
+            throw new IOException("No .proto files found in directory: " + unzipedProtoFile.toAbsolutePath());
+        }
+
+        Path wellKnownProtosPath = Paths.get("src/main/resources/protoc/include");
+
+        List<String> command = new ArrayList<>();
+        command.add(this.protocExecutable.getAbsolutePath());
+        command.add("--proto_path=" + wellKnownProtosPath.toAbsolutePath()); // Use well-known protos as proto_path
+        command.add("--proto_path=" + unzipedProtoFile.toAbsolutePath()); // Use root unzipedProtoFile as proto_path
+        for (Path dir : protoDirectories) {
+            command.add("--proto_path=" + dir.toAbsolutePath()); // Add subdirectories
+        }
+        command.add("--java_out=" + outputDir.getAbsolutePath());
+        command.addAll(protoFiles); // Add all found .proto files
+
+        System.out.println(protoFiles);
+
+        ProcessBuilder processBuilder = new ProcessBuilder(command);
+        processBuilder.redirectErrorStream(true); // Merge error stream with output stream
+        Process process = processBuilder.start();
+
+        // Read and print process output for debugging
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+        }
+
+        if (process.waitFor() != 0) {
+            throw new IOException("Failed to compile proto files. Check output for details.");
+        }
+
+        return process;
+    }
+
 
     private static void compileProto(List<File> protoFiles, Process process) throws InterruptedException, IOException {
         System.out.println("Compiling");

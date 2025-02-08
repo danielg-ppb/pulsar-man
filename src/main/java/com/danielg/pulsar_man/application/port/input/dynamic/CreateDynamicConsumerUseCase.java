@@ -10,5 +10,7 @@ import java.util.List;
 public interface CreateDynamicConsumerUseCase {
     void createDynamicConsumer(DynamicConsumerRequest request, MultipartFile protoFile) throws Exception;
 
+    void createDynamicConsumerWithZipFile(DynamicConsumerRequest request, MultipartFile zipFile) throws Exception;
+
     void createDynamicConsumer(DynamicConsumerRequest pulsarConsumerRequest, File consumerSchemaFile, List<File> protoFiles);
 }

@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package com.contract.uof;
+option java_outer_classname = "EventStatusUOF";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+enum EventStatusProto {
+  /** Represents the absence of value. Same as java's null */
+  EVENT_STATUS_UNSET = 0;
+  NOT_STARTED = 1;
+  LIVE = 2;
+  SUSPENDED = 3;
+  ENDED = 4;
+  FINISHED = 5;
+  CANCELLED = 6;
+  DELAYED = 7;
+  INTERRUPTED = 8;
+  POSTPONED = 9;
+  ABANDONED = 10;
+  UNKNOWN = 11;
+}

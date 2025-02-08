@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package com.contract.uof;
+option java_outer_classname = "SportEventStatusUOF";
+
+import "reference.proto";
+import "clock.proto";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+message SportEventStatusProto {
+  google.protobuf.StringValue status = 1;
+  google.protobuf.StringValue reporting = 2;
+  google.protobuf.StringValue match_status = 3;
+  google.protobuf.StringValue home_score = 4;
+  google.protobuf.StringValue away_score = 5;
+  ClockProto updateTime = 6;
+}

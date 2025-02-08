@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package com.contract.uof;
+option java_outer_classname = "ScheduledStartTimeChangeUOF";
+
+
+import "google/protobuf/timestamp.proto";
+
+message ScheduledStartTimeChangeProto {
+  google.protobuf.Timestamp oldTime = 1;
+  google.protobuf.Timestamp newTime = 2;
+  google.protobuf.Timestamp changedAt = 3;
+}

@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package com.contract.uof;
+option java_outer_classname = "SeasonUOF";
+
+import "match.proto";
+import "competitor.proto";
+import "group.proto";
+import "round.proto";
+import "season_coverage.proto";
+import "sport_summary.proto";
+import "tournament_coverage.proto";
+import "tournament_summary.proto";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+message SeasonProto {
+  google.protobuf.StringValue id = 1;
+  google.protobuf.StringValue sportId = 2;
+  google.protobuf.StringValue name = 3;
+  google.protobuf.Timestamp scheduledTime = 4;
+  google.protobuf.Timestamp scheduledEndTime = 5;
+  google.protobuf.BoolValue isStartTimeTbd = 6;
+  google.protobuf.StringValue replacedBy = 7;
+  TournamentCoverageProto tournamentCoverage = 8;
+  SportSummaryProto sport = 9;
+  SeasonCoverageProto coverage = 10;
+  repeated GroupProto groups = 11;
+  repeated MatchProto schedule = 12;
+  RoundProto currentRound = 13;
+  google.protobuf.StringValue year = 14;
+  TournamentSummaryProto tournamentInfo = 15;
+  repeated CompetitorProto competitors = 16;
+}
+
+

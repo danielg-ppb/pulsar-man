@@ -1,6 +1,7 @@
 package com.danielg.pulsar_man.infrastructure.adapter.input.rest.controller.file;
 
 import com.danielg.pulsar_man.application.port.input.file.UploadFileUseCase;
+import com.danielg.pulsar_man.application.port.input.file.UploadZipFileUseCase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,21 +11,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/api/file/proto")
 public class ProtoUploadController {
     private final UploadFileUseCase uploadFileUseCase;
+    private final UploadZipFileUseCase uploadZipFileUseCase;
 
     @Autowired
-    public ProtoUploadController(UploadFileUseCase uploadFileUseCase) {
+    public ProtoUploadController(UploadFileUseCase uploadFileUseCase, UploadZipFileUseCase uploadZipFileUseCase) {
         this.uploadFileUseCase = uploadFileUseCase;
+        this.uploadZipFileUseCase = uploadZipFileUseCase;
     }
 
     @PostMapping("/upload")
@@ -37,36 +35,13 @@ public class ProtoUploadController {
         }
     }
 
-    @PostMapping("/upload/multiple")
-    public ResponseEntity<String> uploadFiles(@RequestParam("files") MultipartFile[] files) {
-        StringBuilder responseMessage = new StringBuilder();
-        StringBuilder parsedContent = new StringBuilder();
-
+    @PostMapping("/upload/zip")
+    public ResponseEntity<String> uploadZipFile(@RequestParam("file") MultipartFile file) {
         try {
-            for (MultipartFile file : files) {
-                String content = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))
-                        .lines().collect(Collectors.joining("\n"));
-
-                boolean foundFirstMessage = false;
-
-                for (String line : content.lines().toList()) {
-                    if (line.startsWith("message ") || line.startsWith("enum ")) {
-                        foundFirstMessage = true;
-                    }
-
-                    if (foundFirstMessage) {
-                        parsedContent.append(line).append("\n");
-                    }
-                }
-
-                // Print to console
-                System.out.println("Proto File Content:\n" + parsedContent);
-
-                responseMessage.append("File uploaded successfully: ").append(file.getOriginalFilename()).append("\n");
-            }
-            return new ResponseEntity<>(responseMessage.toString(), HttpStatus.OK);
+            Path savedFile = uploadZipFileUseCase.saveAndUnzipFile(file);
+            return new ResponseEntity<>("Zip File uploaded successfully!" + savedFile.getFileName().toString(), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>("File upload failed: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Zip file upload failed: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

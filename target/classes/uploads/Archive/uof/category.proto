@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package com.contract.uof;
+option java_outer_classname = "CategoryUOF";
+
+import "tournament.proto";
+
+import "google/protobuf/wrappers.proto";
+
+message CategoryProto {
+  google.protobuf.StringValue id = 1;
+  google.protobuf.StringValue name = 2;
+  google.protobuf.StringValue countryCode = 3;
+  repeated TournamentProto tournaments = 4;
+}

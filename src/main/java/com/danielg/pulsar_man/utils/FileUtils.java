@@ -4,6 +4,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class FileUtils {
     public static File saveMultipartFile(MultipartFile multipartFile) throws IOException {
@@ -22,5 +24,12 @@ public class FileUtils {
         multipartFile.transferTo(targetFile);
 
         return targetFile;
+    }
+
+    public static String getFileNameWithoutExtension(String filePath) {
+        Path path = Paths.get(filePath);
+        String fileName = path.getFileName().toString();
+        int lastDotIndex = fileName.lastIndexOf('.');
+        return (lastDotIndex == -1) ? fileName : fileName.substring(0, lastDotIndex);
     }
 }

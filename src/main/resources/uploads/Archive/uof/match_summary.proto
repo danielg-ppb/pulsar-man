@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package com.contract.uof;
+option java_outer_classname = "MatchSummaryUOF";
+
+import "competitor.proto";
+import "player.proto";
+import "event_status.proto";
+import "fixture_summary.proto";
+import "home_away.proto";
+import "round.proto";
+import "season_summary.proto";
+import "team_competitor.proto";
+import "tournament_summary.proto";
+import "venue_summary.proto";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+message MatchSummaryProto {
+  google.protobuf.StringValue id = 1;
+  google.protobuf.StringValue name = 2;
+  google.protobuf.StringValue sportId = 3;
+  google.protobuf.StringValue tournamentId = 8;
+  RoundProto round = 9;
+  PlayerProto homeCompetitor = 10;
+  PlayerProto awayCompetitor = 11;
+  FixtureSummaryProto fixture = 12;
+  VenueSummaryProto venue = 13;
+}

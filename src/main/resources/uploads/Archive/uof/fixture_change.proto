@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package com.contract.uof;
+option java_outer_classname = "FixtureChangeUOF";
+
+import "reference.proto";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "match.proto";
+
+message FixtureChangeProto {
+  google.protobuf.StringValue event_id = 1;
+  google.protobuf.StringValue product = 2;
+  google.protobuf.StringValue changeId = 3;
+  MatchProto match = 4;
+}

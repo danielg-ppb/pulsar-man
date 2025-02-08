@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package com.contract.uof;
+
+option java_outer_classname = "HomeAwayUOF";
+
+enum HomeAwayProto {
+  /** Represents the absence of value. Same as java's null */
+  HOME_AWAY_UNSET = 0;
+  HOME = 1;
+  AWAY = 2;
+}

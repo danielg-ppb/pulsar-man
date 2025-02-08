@@ -1,0 +1,20 @@
+syntax = "proto3";
+package com.contract.templating;
+option java_outer_classname = "GameState";
+
+import "transversal/metadata.proto";
+
+message GameStateProto {
+
+  string matchId = 1;
+  string competitorA = 2;
+  string competitorB = 3;
+  int32 numOfSets = 4;
+  string marketName = 5;
+
+}
+
+message GameStateEnvelopeProto {
+  transversal.Metadata metadata = 1;
+  GameStateProto gameState = 2;
+}

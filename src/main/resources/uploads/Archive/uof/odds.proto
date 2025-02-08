@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package com.contract.uof;
+option java_outer_classname = "OddsUOF";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "market.proto";
+
+message OddsProto {
+  repeated MarketProto markets = 1;
+}

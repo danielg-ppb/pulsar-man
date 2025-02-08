@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package com.contract.uof;
+option java_outer_classname = "FixtureFormatUOF";
+
+import "surface.proto";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+message FixtureFormatProto {
+  google.protobuf.BoolValue neutral_ground = 1;
+  google.protobuf.BoolValue auto_traded = 2;
+  google.protobuf.BoolValue draw_possible = 3;
+  google.protobuf.BoolValue no_advantage_scoring = 4;
+  google.protobuf.Int32Value best_of = 5;
+  google.protobuf.Int32Value set_limit = 6;
+  google.protobuf.Int32Value super_tie_break = 8;
+  CoverageSourceProto coverage_source = 9;
+  SurfaceProto surface = 10;
+}
+
+enum CoverageSourceProto {
+  /** Represents the absence of value. Same as java's null */
+  COVERAGE_SOURCE_UNSET = 0;
+  VENUE_COVERAGE_SOURCE = 1;
+  TV_COVERAGE_SOURCE = 2;
+}

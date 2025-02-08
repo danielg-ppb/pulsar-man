@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package com.contract.uof;
+option java_outer_classname = "FixtureUOF";
+
+import "coverage_info.proto";
+import "fixture_format.proto";
+import "producer_info.proto";
+import "reference.proto";
+import "scheduled_start_time.proto";
+import "tv_channel.proto";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+message FixtureProto {
+  google.protobuf.Timestamp startTime = 1;
+  google.protobuf.BoolValue isStartTimeConfirmed = 2;
+  google.protobuf.BoolValue startTimeTbd = 3;
+  google.protobuf.StringValue nextLiveTime = 4;
+  FixtureFormatProto format = 5; //Equivalent to Extra Info in sdk
+  repeated TvChannelProto tvChannels = 6;
+  CoverageInfoProto coverageInfo = 7;
+  ProducerInfoProto producerInfo = 8;
+  ReferenceProto references = 9;
+  google.protobuf.StringValue replacedBy = 10;
+  repeated ScheduledStartTimeChangeProto scheduledStartTimeChanges = 11;
+  //parent and stage ignored for now
+}

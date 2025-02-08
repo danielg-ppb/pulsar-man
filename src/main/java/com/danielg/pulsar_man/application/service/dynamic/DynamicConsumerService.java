@@ -2,6 +2,7 @@ package com.danielg.pulsar_man.application.service.dynamic;
 
 import com.danielg.pulsar_man.application.port.input.dynamic.CreateDynamicConsumerUseCase;
 import com.danielg.pulsar_man.application.port.input.dynamic.InitializePulsarDynamicConsumerUseCase;
+import com.danielg.pulsar_man.application.port.input.file.UploadZipFileUseCase;
 import com.danielg.pulsar_man.domain.model.PulsarDynamicConsumer;
 import com.danielg.pulsar_man.domain.repository.DynamicConsumerRepository;
 import com.danielg.pulsar_man.infrastructure.adapter.input.rest.data.request.DynamicConsumerRequest;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 @Service
@@ -28,15 +30,18 @@ public class DynamicConsumerService implements CreateDynamicConsumerUseCase,
     private final DynamicConsumerFactory dynamicConsumerFactory;
     private final DynamicConsumerRepository dynamicConsumerRepository;
     private final ProtocExecutor protocExecutor;
+    private final UploadZipFileUseCase uploadZipFileUseCase;
     private PulsarDynamicConsumer pulsarDynamicConsumer;
 
     public DynamicConsumerService(ClientFactory clientFactory,
                                   DynamicConsumerFactory dynamicConsumerFactory,
                                   DynamicConsumerRepository dynamicConsumerRepository,
+                                  UploadZipFileUseCase uploadZipFileUseCase,
                                   ProtocExecutor protocExecutor) {
         this.clientFactory = clientFactory;
         this.dynamicConsumerFactory = dynamicConsumerFactory;
         this.dynamicConsumerRepository = dynamicConsumerRepository;
+        this.uploadZipFileUseCase = uploadZipFileUseCase;
         this.protocExecutor = protocExecutor;
     }
 
@@ -60,6 +65,12 @@ public class DynamicConsumerService implements CreateDynamicConsumerUseCase,
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void createDynamicConsumerWithZipFile(DynamicConsumerRequest request, MultipartFile zipFile) throws Exception {
+        Path savedZipFolder = this.uploadZipFileUseCase.saveAndUnzipFile(zipFile);
+        protocExecutor.generateJavaClassesFromZippedProtoFolder(savedZipFolder);
     }
 
     @Override

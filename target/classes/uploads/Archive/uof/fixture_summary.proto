@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package com.contract.uof;
+option java_outer_classname = "FixtureSummaryUOF";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+message FixtureSummaryProto {
+  google.protobuf.Timestamp startTime = 1;
+  google.protobuf.StringValue nextLiveTime = 2;
+}

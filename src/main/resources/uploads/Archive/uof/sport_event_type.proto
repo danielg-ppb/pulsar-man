@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package com.contract.uof;
+option java_outer_classname = "SportEventTypeUOF";
+
+enum SportEventTypeProto {
+  /** Represents the absence of value. Same as java's null */
+  SPORT_EVENT_TYPE_UNSET = 0;
+  PARENT = 1;
+  CHILD = 2;
+}
+
+

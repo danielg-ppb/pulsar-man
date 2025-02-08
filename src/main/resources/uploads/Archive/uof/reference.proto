@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package com.contract.uof;
+option java_outer_classname = "ReferenceUOF";
+
+import "google/protobuf/wrappers.proto";
+
+message ReferenceProto {
+  google.protobuf.StringValue betradarId = 1;
+  google.protobuf.StringValue betfairId = 2;
+  google.protobuf.Int32Value rotationNumber = 3;
+  google.protobuf.StringValue aamsId = 4;
+  map<string, string> references = 5;
+}

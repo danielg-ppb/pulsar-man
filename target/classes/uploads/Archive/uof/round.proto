@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package com.contract.uof;
+option java_outer_classname = "RoundUOF";
+
+import "google/protobuf/wrappers.proto";
+
+message RoundProto {
+  google.protobuf.StringValue type = 1;
+  google.protobuf.Int32Value number = 2;
+  google.protobuf.StringValue name = 3;
+  google.protobuf.StringValue otherMatchId = 4;
+  google.protobuf.Int32Value cupRoundMatches = 5;
+  google.protobuf.Int32Value cupRoundMatchNumber = 6;
+  google.protobuf.StringValue betradarId = 7;
+  google.protobuf.StringValue phaseOrGroupLongName = 8;
+  google.protobuf.StringValue groupId = 9;
+  google.protobuf.StringValue phase = 10;
+  google.protobuf.StringValue group = 11;
+  google.protobuf.StringValue betradarName = 12;
+}

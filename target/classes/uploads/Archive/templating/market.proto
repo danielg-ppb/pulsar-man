@@ -1,0 +1,17 @@
+syntax = "proto3";
+package com.contract.templating;
+option java_outer_classname = "Market";
+
+import "transversal/metadata.proto";
+
+message MarketProto {
+
+  string marketName = 1;
+  map<string, string> properties = 2;
+
+}
+
+message MarketEnvelopeProto {
+  transversal.Metadata metadata = 1;
+  MarketProto market = 2;
+}

@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package com.contract.uof;
+option java_outer_classname = "GroupUOF";
+
+import "competitor.proto";
+
+import "google/protobuf/wrappers.proto";
+
+message GroupProto {
+  google.protobuf.StringValue id = 1;
+  google.protobuf.StringValue name = 2;
+  repeated CompetitorProto competitors = 3;
+}

@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package com.contract.uof;
+option java_outer_classname = "TournamentCoverageUOF";
+
+import "google/protobuf/wrappers.proto";
+
+message TournamentCoverageProto {
+  google.protobuf.BoolValue isLiveCoverage = 1;
+}

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package com.contract.uof;
+option java_outer_classname = "TeamCompetitorUOF";
+
+import "competitor.proto";
+
+import "google/protobuf/wrappers.proto";
+
+message TeamCompetitorProto {
+  CompetitorProto competitor = 1;
+  google.protobuf.StringValue qualifier = 2;
+}
+
+
+

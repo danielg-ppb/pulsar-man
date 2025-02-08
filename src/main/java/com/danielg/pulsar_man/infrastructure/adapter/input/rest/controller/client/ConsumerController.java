@@ -2,9 +2,7 @@ package com.danielg.pulsar_man.infrastructure.adapter.input.rest.controller.clie
 
 import com.danielg.pulsar_man.application.port.input.consumer.ConsumeMessagesUseCase;
 import com.danielg.pulsar_man.application.port.input.consumer.InitializeConsumerUseCase;
-import com.danielg.pulsar_man.application.port.input.consumer.InitializeDynamicConsumer;
 import com.danielg.pulsar_man.application.port.input.dynamic.CreateDynamicConsumerUseCase;
-import com.danielg.pulsar_man.application.port.input.dynamic.InitializePulsarDynamicConsumerUseCase;
 import com.danielg.pulsar_man.infrastructure.adapter.input.rest.data.request.DynamicConsumerRequest;
 import com.danielg.pulsar_man.infrastructure.adapter.input.rest.data.request.PulsarConsumerRequest;
 import com.danielg.pulsar_man.infrastructure.adapter.input.rest.data.response.GenericResponse;
@@ -46,11 +44,28 @@ public class ConsumerController {
     }
 
     @PostMapping("/dynamic-initialize")
-    public ResponseEntity<GenericResponse> initializeDynamicConsumer(@Valid @ModelAttribute DynamicConsumerRequest request,
-                                                                     @RequestParam(required = false) MultipartFile protoFile) {
+    public ResponseEntity<GenericResponse> initializeDynamicConsumerWithFileUpload(
+            @Valid @ModelAttribute DynamicConsumerRequest request,
+            @RequestParam(required = false) MultipartFile protoFile) {
         try {
             System.out.println("Request: " + request);
             createDynamicConsumerUseCase.createDynamicConsumer(request, protoFile);
+            GenericResponse response = new GenericResponse("Dynamic consumer initialized successfully");
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+    @PostMapping("/dynamic-initialize/zip-file")
+    public ResponseEntity<GenericResponse> initializeDynamicConsumerWithMultipleFileUpload(
+            @Valid @ModelAttribute DynamicConsumerRequest request,
+            @RequestParam(required = false) MultipartFile zipFile) {
+        try {
+            System.out.println("Request: " + request);
+            createDynamicConsumerUseCase.createDynamicConsumerWithZipFile(request, zipFile);
             GenericResponse response = new GenericResponse("Dynamic consumer initialized successfully");
 
             return ResponseEntity.ok(response);

@@ -1,0 +1,15 @@
+syntax = "proto3";
+import "google/protobuf/wrappers.proto";
+
+package transversal;
+
+option java_package = "com.flutter.sports.proto.transversal";
+option java_outer_classname = "MetadataProto";
+
+message Metadata {
+  string correlationId = 1;
+  string provider = 2;
+  string externalId = 5;
+  map<string, string> latencyMetrics = 6;
+  google.protobuf.BoolValue heartbeat = 7;
+}

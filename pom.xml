@@ -26,6 +26,7 @@
         <google-protobuf-java-util.version>3.25.5</google-protobuf-java-util.version>
         <commons-text.version>1.13.0</commons-text.version>
         <pulsar-lib.version>4.0.1</pulsar-lib.version>
+        <httpclient5.version>5.4.2</httpclient5.version>
     </properties>
     <dependencies>
         <dependency>
@@ -104,6 +105,11 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${commons-io.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>${httpclient5.version}</version>
         </dependency>
     </dependencies>
 

@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package com.contract.uof;
+option java_outer_classname = "SurfaceUOF";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+enum SurfaceProto {
+  /** Represents the absence of value. Same as java's null */
+  SURFACE_UNSET = 0;
+  HARD_COURT = 1;
+  GRASS = 2;
+  SAND = 3;
+  RED_CLAY = 4;
+  GREEN_CLAY = 5;
+  HARDCOURT_OUTDOOR = 6;
+  CARPET_INDOOR = 7;
+  SYNTHETIC_INDOOR = 8;
+}

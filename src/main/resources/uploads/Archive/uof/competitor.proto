@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package com.contract.uof;
+option java_outer_classname = "CompetitorUOF";
+
+import "category_summary.proto";
+import "player.proto";
+import "reference.proto";
+import "venue.proto";
+
+import "google/protobuf/wrappers.proto";
+
+message CompetitorProto {
+  google.protobuf.StringValue id = 1;
+  google.protobuf.StringValue name = 2;
+  google.protobuf.BoolValue isVirtual = 3;
+  ReferenceProto references = 4;
+  google.protobuf.StringValue countryCode = 5;
+  google.protobuf.StringValue country = 6;
+  google.protobuf.StringValue abbreviation = 7;
+  repeated PlayerProto players = 8;
+  google.protobuf.StringValue gender = 9;
+  CategorySummaryProto category = 10;
+  //We might need to add a manager later
+}

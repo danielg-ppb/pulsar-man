@@ -6,5 +6,5 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 public interface UploadFileUseCase {
-    Path saveFile(MultipartFile file) throws IOException, InterruptedException;
+    Path saveFile(MultipartFile file) throws IOException;
 }

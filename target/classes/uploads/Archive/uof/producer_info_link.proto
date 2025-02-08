@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package com.contract.uof;
+option java_outer_classname = "ProducerInfoLinkUOF";
+
+import "google/protobuf/wrappers.proto";
+
+message ProducerInfoLinkProto {
+  google.protobuf.StringValue reference = 1;
+  google.protobuf.StringValue name = 2;
+}

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package com.contract.uof;
+option java_outer_classname = "SeasonCoverageUOF";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+message SeasonCoverageProto {
+  google.protobuf.StringValue seasonId = 1;
+  google.protobuf.StringValue maxCoverageLevel = 2;
+  google.protobuf.StringValue minCoverageLevel = 3;
+  google.protobuf.StringValue maxCovered = 4;
+  google.protobuf.Int32Value played = 5;
+  google.protobuf.Int32Value scheduled = 6;
+}

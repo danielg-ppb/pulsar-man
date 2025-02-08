@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package com.contract.uof;
+option java_outer_classname = "TournamentUOF";
+
+import "category_summary.proto";
+import "current_season_info.proto";
+import "match.proto";
+import "season.proto";
+
+import "google/protobuf/wrappers.proto";
+
+message TournamentProto {
+  CurrentSeasonInfoProto currentSeason = 1;
+  repeated SeasonProto seasons = 2;
+  google.protobuf.BoolValue isExhibitionGames = 3;
+  repeated MatchProto matches = 4;
+  CategorySummaryProto category = 5;
+}
+

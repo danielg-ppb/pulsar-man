@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package com.contract.uof;
+option java_outer_classname = "ProducerInfoUOF";
+
+import "producer_info_link.proto";
+import "streaming_channel.proto";
+
+import "google/protobuf/wrappers.proto";
+
+message ProducerInfoProto {
+  google.protobuf.BoolValue isAutoTraded = 1;
+  google.protobuf.BoolValue isInHostedStatistics = 2;
+  google.protobuf.BoolValue isInLiveScore = 3;
+  google.protobuf.BoolValue isInLiveMatchTracker = 4;
+  repeated ProducerInfoLinkProto producerInfoLinks = 5;
+  repeated StreamingChannelProto streamingChannels = 6;
+}

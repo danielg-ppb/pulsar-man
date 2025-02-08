@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package com.contract.uof;
+option java_outer_classname = "CollectorEnvelopeUOF";
+
+import "transversal/metadata.proto";
+import "odds_change.proto";
+import "fixture_change.proto";
+
+
+import "google/protobuf/any.proto";
+
+message CollectorEnvelopeProto {
+  transversal.Metadata metadata = 1;
+
+  oneof payload {
+    FixtureChangeProto fixtureChange = 2;
+    OddsChangeProto oddChange = 3;
+  }
+}

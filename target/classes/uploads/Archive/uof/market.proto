@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package com.contract.uof;
+option java_outer_classname = "MarketUOF";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "outcome.proto";
+
+message MarketProto {
+  google.protobuf.StringValue id = 1;
+  google.protobuf.StringValue specifiers = 2;
+  google.protobuf.StringValue favourite = 3;
+  google.protobuf.StringValue status = 4;
+  repeated OutcomeProto outcome = 5;
+}

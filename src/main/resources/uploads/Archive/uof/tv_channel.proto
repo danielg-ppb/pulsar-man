@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package com.contract.uof;
+option java_outer_classname = "TvChannelUOF";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+
+message TvChannelProto {
+
+  google.protobuf.StringValue name = 1;
+  google.protobuf.Timestamp time = 2;
+  google.protobuf.StringValue streamUrl = 3;
+}

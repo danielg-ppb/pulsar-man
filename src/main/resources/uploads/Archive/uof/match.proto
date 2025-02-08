@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package com.contract.uof;
+option java_outer_classname = "MatchUOF";
+
+import "competitor.proto";
+import "event_status.proto";
+import "fixture.proto";
+import "home_away.proto";
+import "round.proto";
+import "season_summary.proto";
+import "team_competitor.proto";
+import "tournament_summary.proto";
+import "venue.proto";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+
+//We only need Match, not any other competition
+message MatchProto {
+  google.protobuf.StringValue id = 1;
+  google.protobuf.StringValue name = 2;
+  //Match Status and Competition Status is missing. It can be more related to in-play.
+  google.protobuf.StringValue sportId = 3;
+  google.protobuf.Timestamp scheduledTime = 4;
+  google.protobuf.Timestamp scheduledEndTime = 5;
+  google.protobuf.BoolValue isStartTimeTbd = 6;
+  google.protobuf.StringValue replacedBy = 7;
+  BookingStatusProto bookingStatus = 8;
+  VenueProto venue = 9;
+  SportEventConditionsProto conditions = 10;
+  EventStatusProto eventStatus = 11;
+  RoundProto tournamentRound = 12;
+  repeated CompetitorProto competitors = 13;
+  TeamCompetitorProto homeCompetitor = 14;
+  TeamCompetitorProto awayCompetitor = 15;
+  SeasonSummaryProto season = 16;
+  TournamentSummaryProto tournament = 17;
+  FixtureProto fixture = 18;
+  //we might need to add event timeline later
+  DelayedInfoProto delayedInfo = 19;
+}
+
+message DelayedInfoProto {
+  google.protobuf.Int32Value id = 1;
+  google.protobuf.StringValue description = 2;
+}
+
+
+enum BookingStatusProto {
+  /** Represents the absence of value. Same as java's null */
+  BOOKING_STATUS_UNSET = 0;
+  BUYABLE = 1;
+  BOOKABLE = 2;
+  BOOKED = 3;
+  UNAVAILABLE = 4;
+}
+
+message SportEventConditionsProto {
+  google.protobuf.StringValue attendance = 1;
+  google.protobuf.StringValue eventMode = 2;
+  RefereeProto referee = 3;
+  WeatherInfoProto weatherInfo = 4;
+}
+
+message RefereeProto {
+  google.protobuf.StringValue id = 1;
+  google.protobuf.StringValue name = 2;
+  google.protobuf.StringValue nationality = 3;
+}
+
+message WeatherInfoProto {
+  google.protobuf.StringValue pitch = 1;
+  google.protobuf.Int32Value temperature = 2;
+  google.protobuf.StringValue weatherConditions = 3;
+  google.protobuf.StringValue wind = 4;
+  google.protobuf.StringValue windAdvantage = 5;
+}
+
+

@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package com.contract.uof;
+option java_outer_classname = "StreamingChannelUOF";
+
+import "google/protobuf/wrappers.proto";
+
+message StreamingChannelProto {
+  google.protobuf.StringValue id = 1;
+  google.protobuf.StringValue name = 2;
+}

@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package transversal;
+
+option java_package = "com.flutter.sports.proto.transversal";
+option java_outer_classname = "IdProto";
+
+message Id {
+  string externalId = 1;
+  string canonicalId = 2;
+  string source = 3;
+}
